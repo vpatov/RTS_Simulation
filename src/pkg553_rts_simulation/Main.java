@@ -35,7 +35,7 @@ public class Main extends Application {
     
     static Simulation_Object[][] simul_grid;
     static Rectangle [][] cells;
-    static int SCREEN_WIDTH = 550;
+    static int SCREEN_WIDTH = 600;
     static int SCREEN_HEIGHT = 650;
     static int X_CELLS = 200;
     static int Y_CELLS = 200;
@@ -44,8 +44,14 @@ public class Main extends Application {
     static Random random = new Random();
     static Timer timer;
     
-    //TODO kill all threads on application close
+    // TODO kill all threads on application close
+    // TODO Improve performance of drawing cells - 
+    // take inspiration from 
+    // https://stackoverflow.com/questions/37648269/how-to-improve-performance-of-javafx-graphic-drawing
     
+    // TODO Perform simulation separate from GUI threads, update some memory buffer 
+    // with easy to read state and then update GUI based on value of that memory 
+    // buffer. Simulation should happen faster than GUI reads from buffer.
     
     public Scene initialize_gui(){
         initialize_simulation();
@@ -69,11 +75,11 @@ public class Main extends Application {
     public static Pane initializeControls(int screen_size){
         
         //Slider for time ticks
-        slider = new Slider(0, 1, 0.5);
+        slider = new Slider(0, 3, 2);
         slider.setShowTickMarks(true);
         slider.setShowTickLabels(true);
-        slider.setMajorTickUnit(0.25f);
-        slider.setBlockIncrement(0.1f);
+        slider.setMajorTickUnit(0.50f);
+        slider.setBlockIncrement(0.25f);
         
         // This might be too responsive, as the listener is triggered about
         // 50 times when you make one slide. Maybe better to replace with some
