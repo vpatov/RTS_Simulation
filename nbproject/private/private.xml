@@ -5,12 +5,8 @@
         <group>
             <file>file:/C:/Users/Vasia/Documents/NetBeansProjects/553_RTS_Simulation/src/pkg553_rts_simulation/simulation_main.java</file>
             <file>file:/C:/Users/Vasia/Documents/NetBeansProjects/553_RTS_Simulation/src/pkg553_rts_simulation/Main.java</file>
-            <file>file:/C:/Users/Vasia/Documents/NetBeansProjects/553_RTS_Simulation/src/pkg553_rts_simulation/Structure.java</file>
-            <file>file:/C:/Users/Vasia/Documents/NetBeansProjects/553_RTS_Simulation/src/pkg553_rts_simulation/Faction.java</file>
-            <file>file:/C:/Users/Vasia/Documents/NetBeansProjects/553_RTS_Simulation/src/fastNoise/FastNoise.java</file>
-            <file>file:/C:/Users/Vasia/Documents/NetBeansProjects/553_RTS_Simulation/src/pkg553_rts_simulation/Unit_Type.java</file>
             <file>file:/C:/Users/Vasia/Documents/NetBeansProjects/553_RTS_Simulation/src/pkg553_rts_simulation/Map.java</file>
-            <file>file:/C:/Users/Vasia/Documents/NetBeansProjects/553_RTS_Simulation/src/pkg553_rts_simulation/Unit.java</file>
+            <file>file:/C:/Users/Vasia/Documents/NetBeansProjects/553_RTS_Simulation/src/pkg553_rts_simulation/Simulation_Object.java</file>
         </group>
     </open-files>
 </project-private>
