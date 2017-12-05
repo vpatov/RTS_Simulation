@@ -40,4 +40,15 @@ public class Point {
     public double distance(Point a, Point b){
         return Math.sqrt(Math.pow(a.x - b.x,2) + Math.pow(a.y - b.y,2));
     }
+    
+    public static boolean point_is_inside(Point point, Point top_left, Point bottom_right){
+        return  point.x >= top_left.x       &&  point.y >= top_left.y &&
+                point.x <= bottom_right.x   &&  point.y <= bottom_right.y;
+                
+    }
+    
+    @Override
+    public String toString(){
+        return "(" + x + ", " + y + ")";
+    }
 }

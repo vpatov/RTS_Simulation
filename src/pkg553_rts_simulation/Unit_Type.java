@@ -18,19 +18,74 @@
 
 package pkg553_rts_simulation;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.Iterator;
+import java.util.Scanner;
+
 /**
  *
  * @author Vasia
  */
 public class Unit_Type {
+    
+    static public enum TYPE {
+        TYPE_1, TYPE_2, TYPE_3;
+    }
+
+    static EnumMap<TYPE, Unit_Type> unit_types;
+    
+    String name;
     int gold_cost;
-    int lumber_cost;
-    int production_time;
     int max_health;
-    int health_regen; //every health_regen seconds they regenerate 1 health.
     int damage_min;
     int damage_max;
-    int damage_rate;
     int armor;
+    TYPE type_enum;
+
+    
+
+
+
+
+    
+
+    
+    
+    public static int count_unit_type(ArrayList<Unit> units, TYPE unit_type){
+        int count = 0;
+        for (Unit unit : units) {
+            if (unit.unit_type.type_enum == unit_type){
+                count++;
+            }
+        }
+        return count;
+    }
+    
+    
+    public static void init_unit_types(String filepath){
+        File f = new File(filepath);
+        unit_types = new EnumMap<>(TYPE.class);
+        try {
+            Scanner sc = new Scanner(f);
+            int type_index = 0;
+            
+            while(sc.hasNext()){
+                Unit_Type type = new Unit_Type();
+                type.name = sc.nextLine();
+                type.gold_cost = sc.nextInt();
+                type.damage_min = sc.nextInt();
+                type.damage_max = sc.nextInt();
+                type.armor = sc.nextInt();
+                type.type_enum = TYPE.values()[type_index++];
+                unit_types.put(type.type_enum,type);
+            }
+        }
+        catch (FileNotFoundException e){
+            
+        }
+    }
 
 }

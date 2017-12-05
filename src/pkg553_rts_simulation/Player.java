@@ -18,10 +18,58 @@
 
 package pkg553_rts_simulation;
 
+import java.util.ArrayList;
+
 /**
  *
  * @author simulation533
  */
+
+
+/*
+Anytime any of the four conditions are met, the player takes a specific action. 
+The conditions and actions are going to be of the following form:
+Rule 1: if there is at least G1 gold, and at most  X1 units of type A on the field, 
+    then produce a unit of type A.
+Rule 2: if there is at least G2 gold, and at most X2 units of type B on the field, 
+    then produce a unit of type B.
+Rule 3: if there is at least G3 gold, and at most X3 units of type C on the field, 
+    then produce a unit of type C.
+Rule 4: if there at least X4 units in the home base, send them all out to attack.
+As we design and implement the simulation, the conditions and actions may be of a 
+slightly different variety. However, these rules are easy enough to represent as a
+tuple of four tuples: ((G1,X1),(G2,X2),(G3,X3),(X4)). This makes optimization fairly 
+straightforward, and gets rid of the need for complicated ANNs. 
+The domain of likely effective policies is not too large either. 
+
+*/
+
 public class Player {
     int gold;
+    boolean red;
+    Policy policy;
+    ArrayList<Point> starting_unit_points;
+    
+    class Policy {
+        int g1, g2, g3;
+        int x1, x2, x3, x4;
+        
+        //most basic default policy
+        public Policy(){
+            g1 = 100;
+            g2 = 100;
+            g3 = 100;
+            x1 = 3;
+            x2 = 2;
+            x3 = 1;
+        }
+    }
+    
+    public Player(boolean _red){
+        gold = 0;
+        policy = new Policy();
+        red = _red;
+    }
+    
+    
 }

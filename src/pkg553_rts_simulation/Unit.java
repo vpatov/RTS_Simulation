@@ -59,6 +59,7 @@ public class Unit extends Sim_Obj{
     }
     
     Unit_Type unit_type;
+    Player player;
     int health;
     Unit_State state;
     ArrayList<Point> intermediary_targets;
@@ -66,13 +67,26 @@ public class Unit extends Sim_Obj{
 
     
     
-    //constructors
-    public Unit(int x, int y) {
-        super(x, y);
-    }
     
+    //constructors
+
     public Unit(){
         
+    }
+    
+    public Unit(Unit_Type _unit_type){
+        unit_type = _unit_type;
+    }
+    
+    public Unit(Unit_Type.TYPE type){
+        unit_type = Unit_Type.unit_types.get(type);
+    }
+    
+    
+    static Unit create_units(Unit_Type.TYPE type,Player _player){
+        Unit new_unit = new Unit(type);
+        new_unit.player = _player;
+        return new_unit;
     }
     
     
