@@ -148,10 +148,29 @@ public class Main extends Application {
                 }
             }
         }, 0, (long)(1000 * slider.getValue()));
-           
-            
-
     }
+    
+//    public static void update_visualization(){
+//                int ci1 = toInt(c1);
+//                int ci2 = toInt(c2);
+//
+//                for (int i = 0; i < W; i += CELL_SIZE) {
+//                    for (int j = 0; j < H; j += CELL_SIZE) {
+//                        int ci =
+//                                (i/CELL_SIZE + j/CELL_SIZE) % 2 == 0
+//                                        ? ci1
+//                                        : ci2;
+//                        for (int dx = 0; dx < CELL_SIZE; dx++) {
+//                            for (int dy = 0 ; dy < CELL_SIZE; dy++) {
+//                                buffer[i + dx + W * (j + dy)] = ci;
+//                            }
+//                        }
+//                    }
+//                }
+//
+//                PixelWriter p = gc.getPixelWriter();
+//                p.setPixels(0, 0, W, H, pixelFormat, buffer, 0, W);
+//    }
 
     public static Color getRandomColor(){
         return Color.color(random.nextDouble(), random.nextDouble(), random.nextDouble());

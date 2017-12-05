@@ -51,30 +51,22 @@ Current state (either moving, attacking, gathering, building, idle)
 
 */
 public class Unit extends Simulation_Object{
+    
+    Unit_Type unit_type;
+    int health;
+    Unit_State state;
 
     public Unit(int x, int y) {
         super(x, y);
     }
-
-
+    
+    public Unit(){
+        
+    }
     
     public enum Unit_State {
        MOVING,ATTACKING,GATHERING,BUILDING,IDLE,DEAD
     }
     
-    Unit_Type unit_type;
-    boolean worker;
-    int max_health;
-    int health;
-    int health_regen; //every health_regen seconds they regenerate 1 health.
-    int damage_min;
-    int damage_max;
-    //int movement_speed; for simplicity everyone will have the same movement speed.
-    int damage_rate;
-    int armor;
-    Unit_State state;
-     
-    
-
     
 }
