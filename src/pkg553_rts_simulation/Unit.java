@@ -18,6 +18,8 @@
 
 package pkg553_rts_simulation;
 
+import java.util.ArrayList;
+
 /**
  *
  * @author Vasia
@@ -52,10 +54,19 @@ Current state (either moving, attacking, gathering, building, idle)
 */
 public class Unit extends Sim_Obj{
     
+    public enum Unit_State {
+        MOVING,ATTACKING,IDLE,DEAD;
+    }
+    
     Unit_Type unit_type;
     int health;
     Unit_State state;
+    ArrayList<Point> intermediary_targets;
+    Point movement_target;
 
+    
+    
+    //constructors
     public Unit(int x, int y) {
         super(x, y);
     }
@@ -64,9 +75,13 @@ public class Unit extends Sim_Obj{
         
     }
     
-    public enum Unit_State {
-       MOVING,ATTACKING,GATHERING,BUILDING,IDLE,DEAD
+    
+    //methods
+    public void move(){
+        
     }
+    
+
     
     
 }
