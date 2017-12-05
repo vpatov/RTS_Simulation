@@ -17,25 +17,62 @@
  */
 
 package pkg553_rts_simulation;
-import java.util.Random;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.awt.Color;
+import javax.imageio.ImageIO;
 /**
  *
  * @author Vasia
  */
 public class Map {
-    int MAP_HEIGHT;
-    int MAP_WIDTH;
-    Terrain[][] global_map; //Singleton
+    static int MAP_WIDTH;
+    static int MAP_HEIGHT;
+    static Terrain[][] global_map; //Singleton
     
-    public Map(int height, int width){
-        MAP_HEIGHT = height;
-        MAP_WIDTH = width;
-        global_map = new Terrain[height][width];
+    static final int GRASS_COLOR = -14630848;
+    static final int UNPASSABLE_COLOR = -16777216;
+    static final int STRUCTURE_COLOR = -1;
+//        
+    public static Terrain[][] load_terrain(String filepath){
+        BufferedImage img;
+        Color color;
+        
+        try {
+            img = ImageIO.read(new File(filepath));
+            MAP_WIDTH = img.getWidth();
+            MAP_HEIGHT = img.getHeight();
+            global_map = new Terrain[img.getWidth()][img.getHeight()];
+            for (int i = 0; i < img.getWidth(); i++){
+                for (int j = 0; j < img.getHeight(); j++){
+                    switch(img.getRGB(i,j)){
+                        case GRASS_COLOR:
+                            global_map[i][j] = Terrain.GRASS; break;
+                        case UNPASSABLE_COLOR:
+                            global_map[i][j] = Terrain.CLIFF; break;
+                        case STRUCTURE_COLOR:
+                            global_map[i][j] = Terrain.STRUCTURE; break;
+                        default:
+                            System.out.println("Unexpected color in map: " +  new Color(img.getRGB(i,j)));
+                    }
+
+                }
+            }
+            System.out.println("Loaded map successfully from " + filepath);
+        }
+        catch (IOException ex) {
+            Logger.getLogger(Map.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return global_map;
+        
     }
-    
-    
+        
     public enum Terrain {
-        WATER,CLIFF,GRASS,NON_TERRAIN;
+        WATER,CLIFF,GRASS,NON_TERRAIN,STRUCTURE;
     }
+    
     
 }

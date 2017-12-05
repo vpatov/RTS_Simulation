@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Vasia
+ * Copyright (C) 2017 Simulation533
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,18 +15,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package pkg553_rts_simulation;
 
 /**
  *
- * @author Vasia
+ * @author Simulation533
  */
-public class simulation_main {
-    Map map;
+public class StochasticInput {
     
-    
-    public static void main(String[]args){
-        Map map = new Map(200,200);
-    }
 }

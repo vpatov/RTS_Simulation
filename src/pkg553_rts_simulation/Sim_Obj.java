@@ -22,7 +22,7 @@ package pkg553_rts_simulation;
  *
  * @author simulation533
  */
-public class Simulation_Object {
+public class Sim_Obj {
     
 //    class Point {
 //        int x;
@@ -43,12 +43,12 @@ public class Simulation_Object {
 
 //    Point coordinates;
     
-    public Simulation_Object(int x, int y){
+    public Sim_Obj(int x, int y){
         this.x = x;
         this.y = y;
     }
     
-    public Simulation_Object(){}
+    public Sim_Obj(){}
     
 
     
