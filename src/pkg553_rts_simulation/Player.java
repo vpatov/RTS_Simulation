@@ -22,6 +22,6 @@ package pkg553_rts_simulation;
  *
  * @author simulation533
  */
-public class Faction {
-    
+public class Player {
+    int gold;
 }

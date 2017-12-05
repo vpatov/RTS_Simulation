@@ -50,7 +50,7 @@ Production Resource Cost
 Current state (either moving, attacking, gathering, building, idle)
 
 */
-public class Unit extends Simulation_Object{
+public class Unit extends Sim_Obj{
     
     Unit_Type unit_type;
     int health;
