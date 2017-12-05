@@ -25,8 +25,11 @@ package pkg553_rts_simulation;
 import java.util.ArrayList;
 public class Sim_State {
     
-    Sim_Obj red_force[]; 
-    Sim_Obj blue_force[];
+
+    ArrayList<Unit> red_force;
+    ArrayList<Unit> blue_force;
+    ArrayList<Structure> red_structures;
+    ArrayList<Structure> blue_structures;
     
     public Sim_State(Sim_Obj red[], Sim_Obj blue[]){
         

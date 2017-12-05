@@ -18,6 +18,8 @@
 
 package pkg553_rts_simulation;
 
+import java.util.ArrayList;
+
 public class Sim_Main{
     static Map map;
     static int MAP_WIDTH = 200;
@@ -44,16 +46,44 @@ public class Sim_Main{
         }
     }
     
+    
+//    public static boolean policy_rule1(Player player, ArrayList<Unit> force){
+//        if (player.gold > player.policy.g1 && 
+//                Unit_Type.count_unit_type(force, Unit_Type.TYPE.TYPE_1) < player.policy.x1) {
+//            
+//            
+//        }
+//    }
+    
+    public static void policy_enactment(Player player){
+        Sim_State current = state_buffer[ticks % STATE_BUFFER_SIZE];
+        ArrayList<Unit> force = (player.red)?current.red_force:current.blue_force;
+        
+        
+        
+        
+    }
+    
+    
+    public static void init_simulation(){
+        Map.load_terrain("data/map_01_mirrored.bmp");
+        Map.load_structures();
+        Unit_Type.init_unit_types("data/unit_types.txt");
+        state_buffer = new Sim_State[STATE_BUFFER_SIZE];
+        red = new Player(true); //red on top
+        blue = new Player(false); // blue on bottom
+    }
+    
  
     public static void main(String []args){
-        Map.load_terrain("data/map_01_mirrored.bmp");
-        state_buffer = new Sim_State[STATE_BUFFER_SIZE];
-        red = new Player(); //red on top
-        blue = new Player(); // blue on bottom
+
+        init_simulation();
         
         while (true){
             
             gold_disbursal();
+            policy_enactment(red);
+            policy_enactment(blue);
             // 1) if it is time for gold disbursal according to gold interrarival.
             //      disburse gold
             // 2) For every unit
