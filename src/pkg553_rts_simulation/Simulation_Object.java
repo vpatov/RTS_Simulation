@@ -24,21 +24,35 @@ package pkg553_rts_simulation;
  */
 public class Simulation_Object {
     
-    class Point {
-        int x;
-        int y;
-        
-        public Point(int x, int y){
-            this.x = x;
-            this.y = y;
-        }
+//    class Point {
+//        int x;
+//        int y;
+//        
+//        public Point(int x, int y){
+//            this.x = x;
+//            this.y = y;
+//        }
+//    }
+    
+    private enum Type{
+        UNIT,STRUCTURE;
     }
     
+    int x,y;
+    Type type;
 
-    Point coordinates;
+//    Point coordinates;
     
     public Simulation_Object(int x, int y){
-        coordinates = new Point(x,y);
+        this.x = x;
+        this.y = y;
     }
+    
+    public Simulation_Object(){}
+    
+
+    
+
+    
 
 }

@@ -15,11 +15,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+package pkg553_rts_simulation;
 
 /**
  *
  * @author Simulation533
  */
-public class Terrain {
+
+import java.util.ArrayList;
+public class Simulation_State {
     
+    ArrayList<Simulation_Object> red_units; 
+    ArrayList<Simulation_Object> blue_units;
 }

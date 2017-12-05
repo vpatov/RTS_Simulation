@@ -23,6 +23,8 @@ package pkg553_rts_simulation;
  * @author Vasia
  */
 public class simulation_main {
+    Map map;
+    
     
     public static void main(String[]args){
         Map map = new Map(200,200);

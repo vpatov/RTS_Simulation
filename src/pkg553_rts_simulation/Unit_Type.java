@@ -26,4 +26,11 @@ public class Unit_Type {
     int gold_cost;
     int lumber_cost;
     int production_time;
+    int max_health;
+    int health_regen; //every health_regen seconds they regenerate 1 health.
+    int damage_min;
+    int damage_max;
+    int damage_rate;
+    int armor;
+
 }
