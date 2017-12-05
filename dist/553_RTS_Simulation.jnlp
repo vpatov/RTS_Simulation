@@ -8,7 +8,7 @@
   </information>
   <resources>
     <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
-    <jar href="553_RTS_Simulation.jar" size="47668" download="eager" />
+    <jar href="553_RTS_Simulation.jar" size="47670" download="eager" />
     <jar href="lib\vecmath-1.5.2.jar" size="169541" download="eager" />
   </resources>
   <applet-desc  width="800" height="600" main-class="com.javafx.main.NoJavaFXFallback"  name="553_RTS_Simulation" >

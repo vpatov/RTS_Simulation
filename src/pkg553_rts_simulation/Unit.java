@@ -51,6 +51,12 @@ Current state (either moving, attacking, gathering, building, idle)
 
 */
 public class Unit extends Simulation_Object{
+
+    public Unit(int x, int y) {
+        super(x, y);
+    }
+
+
     
     public enum Unit_State {
        MOVING,ATTACKING,GATHERING,BUILDING,IDLE,DEAD

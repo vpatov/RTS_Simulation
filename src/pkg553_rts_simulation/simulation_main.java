@@ -25,7 +25,6 @@ package pkg553_rts_simulation;
 public class simulation_main {
     
     public static void main(String[]args){
-        Map map = new Map();
-        map.procedurally_generate_map(5, 25, 25);
+        Map map = new Map(200,200);
     }
 }
