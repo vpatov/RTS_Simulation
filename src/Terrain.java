@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Vasia
+ * Copyright (C) 2017 Simulation533
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -16,26 +16,10 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package pkg553_rts_simulation;
-import java.util.Random;
 /**
  *
- * @author Vasia
+ * @author Simulation533
  */
-public class Map {
-    int MAP_HEIGHT;
-    int MAP_WIDTH;
-    Terrain[][] global_map; //Singleton
-    
-    public Map(int height, int width){
-        MAP_HEIGHT = height;
-        MAP_WIDTH = width;
-        global_map = new Terrain[height][width];
-    }
-    
-    
-    public enum Terrain {
-        WATER,CLIFF,GRASS,NON_TERRAIN;
-    }
+public class Terrain {
     
 }

@@ -34,19 +34,11 @@ public class Simulation_Object {
         }
     }
     
-    public enum Terrain {
-        WATER,CLIFF,GRASS,NON_TERRAIN;
-    }
-    
+
     Point coordinates;
-    Terrain terrain;
     
-    public Simulation_Object(){}
     public Simulation_Object(int x, int y){
         coordinates = new Point(x,y);
     }
-    public Simulation_Object(Terrain terrain, int x, int y){
-        coordinates = new Point(x,y);
-        this.terrain = terrain;     
-    }
+
 }
