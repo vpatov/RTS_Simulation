@@ -47,6 +47,10 @@ public class Sim_Obj {
         this.x = x;
         this.y = y;
     }
+//    
+//    public Sim_Obj(Point _p){
+//        location = new Point(_p.x,_p.y);
+//    }
     
     public Sim_Obj(){}
     
