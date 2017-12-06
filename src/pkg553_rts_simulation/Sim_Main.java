@@ -105,9 +105,6 @@ public class Sim_Main{
         red.policy.unit_thresholds[0] = 10;
         red.policy.gold[2] = Unit_Type.unit_types.get(Unit_Type.TYPE.TYPE_3).gold_cost;
         
-        
-        
-        
     }
     
     public static void run_simulation(){
