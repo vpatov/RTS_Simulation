@@ -40,7 +40,7 @@ public class Map {
     
     static int MAP_WIDTH;
     static int MAP_HEIGHT;
-    static Terrain[][] global_map;  //Singleton
+    static Terrain[][] global_map = null;  //Singleton
     static Sim_Obj[][] unit_map;    //Singleton
     static Point[] bottom_starting_points;
     static Point[] top_starting_points; 
@@ -58,6 +58,15 @@ public class Map {
     public static Terrain[][] load_terrain(String filepath){
         BufferedImage img;
         Color color;
+        
+        if (filepath == null){
+            if (global_map != null)
+                return global_map;
+            else {
+                System.err.println("global_map is null. You must provid a filename.");
+                System.exit(1);
+            }
+        }
         
         try {
             img = ImageIO.read(new File(filepath));

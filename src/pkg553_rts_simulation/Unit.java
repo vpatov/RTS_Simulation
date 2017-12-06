@@ -106,6 +106,16 @@ public class Unit extends Sim_Obj{
     }
     
     
+    public void send_out(){
+        
+    }
+    
+    public ArrayList<Point> find_path_to_point(Point dest){
+        return null;
+    }
+            
+    
+    
     //methods
     public void move(){
         
