@@ -29,8 +29,8 @@ public class Sim_Main{
     static int ticks = 0;
     static int ticks_since_last_arrival = 0;
     static int current_gold_index = 0;
-    static int gold_arrival[] = {5,4,3,4,2,4,5,10,8}; //test values
-    static int gold_values[] = {60,44,35,51,54,39,95,87,70};
+    static int gold_arrival[] = {2,2,2,4,2,4,5,10,8}; //test values
+    static int gold_values[] = {100,150,80,51,54,39,95,87,70};
     static Player red, blue;
     
     
@@ -63,6 +63,12 @@ public class Sim_Main{
                 force.addAll(new_units);
             }
         }
+        if (Unit.count_units_in_state(force, Unit.Unit_State.IDLE) >= player.policy.max_idle_units ){
+            for (Unit unit: force){
+                if (unit.state == Unit.Unit_State.IDLE)
+                    unit.send_out(player,current);
+            }
+        }
         
         //if no units of any type were created because of thresholds and not because of gold
         //we need to make at least some kind of unit.
@@ -72,7 +78,15 @@ public class Sim_Main{
     
     //movement and attacking
     public static void update_state(){
+        Sim_State current = state_buffer[ticks % STATE_BUFFER_SIZE];
+        for (Unit unit: current.red_force){
+            unit.update_state(current);
+        }
+        for (Unit unit: current.blue_force){
+            unit.update_state(current);
+        }
         state_buffer[(ticks + 1) % STATE_BUFFER_SIZE] = state_buffer[ticks % STATE_BUFFER_SIZE];
+        ticks++;
     }
     
     
@@ -86,6 +100,10 @@ public class Sim_Main{
         blue = new Player(false); // blue on bottom
         
         
+    }
+    
+    public static void run_simulation(){
+        init_simulation();
     }
     
     
@@ -102,15 +120,11 @@ public class Sim_Main{
             policy_enactment(blue);
 
             System.out.println(red.gold + "," + blue.gold);
-            System.out.println(state_buffer[ticks % STATE_BUFFER_SIZE].red_force);
-            System.out.println(state_buffer[ticks % STATE_BUFFER_SIZE].blue_force);
+//            System.out.println(state_buffer[ticks % STATE_BUFFER_SIZE].red_force);
+//            System.out.println(state_buffer[ticks % STATE_BUFFER_SIZE].blue_force);
                     
             update_state();
-            ticks++;
-            
-            
-            
-            
+
         }
     }
     

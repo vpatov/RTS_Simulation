@@ -20,25 +20,38 @@ package pkg553_rts_simulation;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Objects;
 
 /**
  *
  * @author Simulation533
  */
 
-public class Point {
-    int x;
-    int y;
+final public class Point{
+    final int x;
+    final int y;
     
     public Point(int _x, int _y){
         x = _x;
         y = _y;
     }
+
+
     
-    // I could have overriden the actual equal's method but this will be faster
-    // because we forego class casts and type checks and "Java" formalities
-    public boolean equals(Point p){
+    
+    @Override
+    public boolean equals(Object obj){
+        if (!(obj instanceof Point))
+            return false;
+        if (obj == this)
+            return true;
+        Point p = (Point)obj;
         return p.x == x && p.y == y;
+    }
+    
+    @Override
+    public int hashCode(){
+        return Objects.hash(x,y);
     }
     
     public static double distance(Point a, Point b){

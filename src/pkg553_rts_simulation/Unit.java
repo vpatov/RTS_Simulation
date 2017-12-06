@@ -19,6 +19,7 @@
 package pkg553_rts_simulation;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.PriorityQueue;
@@ -80,10 +81,12 @@ public class Unit extends Sim_Obj implements Cloneable{
     
     public Unit(Unit_Type _unit_type){
         unit_type = _unit_type;
+        state = Unit_State.IDLE;
     }
     
     public Unit(Unit_Type.TYPE type){
         unit_type = Unit_Type.unit_types.get(type);
+        state = Unit_State.IDLE;
     }
     
     
@@ -108,9 +111,17 @@ public class Unit extends Sim_Obj implements Cloneable{
         return new_units;
     }
     
+    public static int count_units_in_state(Collection<Unit> units, Unit_State unit_state){
+        int count = 0;
+        for (Unit unit: units){
+            if (unit.state == unit_state)
+                count++;
+        }
+        return count;
+    }
+    
     //is it returning a copy of a new unit?
-    public void update_state(Sim_State state){
-        
+    public void update_state(Sim_State state){  
         ArrayList<Unit> enemy_units = player.red ? state.blue_force : state.red_force;
         switch (this.state){
             
@@ -120,13 +131,12 @@ public class Unit extends Sim_Obj implements Cloneable{
                     if (path == null){
                         path = find_path_to_point(player.red ? Map.bottom_base : Map.top_base, state);
                     }
-                    
+
                     if (!path.isEmpty()){
                         Point next = path.pop();
+                        System.out.println("Just moved Unit: (" + unit_type.name + ") from " + location + " to " + next);
                         location = next;
                     }
-                    
-
                     
                 }
                 
@@ -135,11 +145,9 @@ public class Unit extends Sim_Obj implements Cloneable{
                 break;
             case IDLE:
                 break;
-                
-                       
+                               
         }
-        
-        
+   
     }
     
     
@@ -185,13 +193,14 @@ public class Unit extends Sim_Obj implements Cloneable{
         LinkedList<Point> path = new LinkedList<>();
         ArrayList<Point> unit_points = new ArrayList<>();
         HashSet<Point> visited = new HashSet<>();
-
-          
+        
+        to_visit.add(new Node(location,null,0));
+        visited.add(location);
+        
+      
         do {
             node = to_visit.remove();
-            point = node.point;
-            visited.add(node.point);
-            
+
             if (node.point.equals(dest)){
                 while (node.prev != null){
                     path.addFirst(node.point);
@@ -199,13 +208,16 @@ public class Unit extends Sim_Obj implements Cloneable{
                 }
                 assert(node.point.equals(location));
                 //path.addFirst(node.point); //not necessary to add the point we are currently at to the path.
+                
+                System.out.println("Path length is: " + path.size());
+
                 return path;
                 
                 
             }
             
             //calculate cost of including neighbors in path
-            
+            point = node.point;
             Point neighbors[] = new Point[]
                     {new Point(point.x+1,point.y), new Point(point.x,point.y+1),
                      new Point(point.x-1,point.y), new Point(point.x,point.y-1)};
@@ -213,7 +225,8 @@ public class Unit extends Sim_Obj implements Cloneable{
             for (Point p: neighbors){
                 if (!visited.contains(p)){
                     if (Point.check_if_passable(point)){
-                        to_visit.add(new Node(p,node,Point.distance(p, node.point) + node.cost));
+                        visited.add(p);
+                        to_visit.add(new Node(p,node,Point.distance(p, dest) + node.cost));
                     }
                 }
             }
@@ -224,6 +237,8 @@ public class Unit extends Sim_Obj implements Cloneable{
         return null;
     }
             
+    
+    
     
     
 

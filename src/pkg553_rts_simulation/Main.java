@@ -36,6 +36,9 @@ import java.util.TimerTask;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import static pkg553_rts_simulation.Sim_Main.gold_disbursal;
+import static pkg553_rts_simulation.Sim_Main.policy_enactment;
+import static pkg553_rts_simulation.Sim_Main.red;
  
 
 /**
@@ -172,6 +175,17 @@ public class Main extends Application {
 //                    }
 //                }
             	
+       
+            
+                gold_disbursal();
+                policy_enactment(Sim_Main.red);
+                policy_enactment(Sim_Main.blue);
+                System.out.println(Sim_Main.red.gold + "," + Sim_Main.blue.gold);
+                Sim_Main.update_state();
+               
+                
+
+                
             	gc.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
     			int[] buffer = rendering.getUpdatedDisplay();
