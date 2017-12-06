@@ -63,8 +63,8 @@ public class Player {
             for (int i = 0; i < gold.length; i++){
                 gold[i] = Unit_Type.unit_types.get(Unit_Type.types[i]).gold_cost;
             }
-            unit_thresholds = new int[]{3,2,1};
-            max_idle_units = 9;
+            unit_thresholds = new int[]{20,10,5};
+            max_idle_units = 3;
             
         }
     }

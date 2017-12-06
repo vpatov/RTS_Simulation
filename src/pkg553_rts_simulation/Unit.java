@@ -65,7 +65,7 @@ public class Unit extends Sim_Obj implements Cloneable{
     Unit_Type unit_type;
     Player player;
     int health;
-    Unit_State state;
+    Unit_State unit_state;
     LinkedList<Point> path;
     Point movement_target;
     Unit enemy_target;
@@ -81,12 +81,12 @@ public class Unit extends Sim_Obj implements Cloneable{
     
     public Unit(Unit_Type _unit_type){
         unit_type = _unit_type;
-        state = Unit_State.IDLE;
+        unit_state = Unit_State.IDLE;
     }
     
     public Unit(Unit_Type.TYPE type){
         unit_type = Unit_Type.unit_types.get(type);
-        state = Unit_State.IDLE;
+        unit_state = Unit_State.IDLE;
     }
     
     
@@ -114,7 +114,7 @@ public class Unit extends Sim_Obj implements Cloneable{
     public static int count_units_in_state(Collection<Unit> units, Unit_State unit_state){
         int count = 0;
         for (Unit unit: units){
-            if (unit.state == unit_state)
+            if (unit.unit_state == unit_state)
                 count++;
         }
         return count;
@@ -123,18 +123,19 @@ public class Unit extends Sim_Obj implements Cloneable{
     //is it returning a copy of a new unit?
     public void update_state(Sim_State state){  
         ArrayList<Unit> enemy_units = player.red ? state.blue_force : state.red_force;
-        switch (this.state){
+        switch (this.unit_state){
             
             //if its moving, but it discovers an enemy nearby, it should switch to attacking.
             case MOVING:
                 {
+                    
+                    
                     if (path == null){
                         path = find_path_to_point(player.red ? Map.bottom_base : Map.top_base, state);
                     }
 
                     if (!path.isEmpty()){
                         Point next = path.pop();
-                        System.out.println("Just moved Unit: (" + unit_type.name + ") from " + location + " to " + next);
                         location = next;
                     }
                     
@@ -151,11 +152,9 @@ public class Unit extends Sim_Obj implements Cloneable{
     }
     
     
-    public void send_out(Player player, Sim_State state){
-        for (Unit unit: (player.red) ? state.red_force : state.blue_force){
-            unit.path = find_path_to_point(player.red? Map.bottom_base: Map.top_base, state);
-            unit.state = Unit_State.MOVING;
-        }
+    public void send_out(Player player, Sim_State sim_state){
+        path = find_path_to_point(player.red? Map.bottom_base: Map.top_base, sim_state);
+        unit_state = Unit_State.MOVING;
     }
     
     
