@@ -1,22 +1,32 @@
 package pkg553_rts_simulation;
 
+import javafx.scene.paint.Color;
+
 public class Rendering {
-	final static int BLACK 	= 0;
-	final static int BLUE_1 = 8900346;
-	final static int BLUE_2 = 4620980;
-	final static int BLUE_3 = 255;
-	final static int BLUE_4 = 1644912;
-	final static int GREEN 	= 65280;
-	final static int RED_1	= 15761536;
-	final static int RED_2	= 13458524;
-	final static int RED_3 	= 16711680;
-	final static int RED_4	= 11674146;
-	final static int WHITE 	= 16777215;
+	final static int BLACK 	= colorToInt(Color.BLACK);
+	final static int BLUE_1 = colorToInt(Color.rgb(135, 206, 235));
+	final static int BLUE_2 = colorToInt(Color.rgb(70, 130, 180));
+	final static int BLUE_3 = colorToInt(Color.rgb(0, 0, 255));
+	final static int BLUE_4 = colorToInt(Color.rgb(0, 0, 128));
+	final static int GREEN 	= colorToInt(Color.GREEN);
+	final static int RED_1	= colorToInt(Color.rgb(205, 92, 92));
+	final static int RED_2	= colorToInt(Color.rgb(220, 20, 60));
+	final static int RED_3 	= colorToInt(Color.rgb(255, 0, 0));
+	final static int RED_4	= colorToInt(Color.rgb(139, 0, 0));
+	final static int WHITE 	= colorToInt(Color.WHITE);
 	
 	static int[] colors;
 	static int[] buffer;
 	
-	public Rendering() {
+	static int _cellSize;
+	static int _height;
+	static int _width;
+	
+	public Rendering(int width, int height, int cellSize) {
+		_cellSize = cellSize;
+		_height = height;
+		_width = width;
+		
 		initColors();
 		initBuffer();
 	}
@@ -28,25 +38,40 @@ public class Rendering {
     	colors[Map.Terrain.STRUCTURE.ordinal()] 	= WHITE;
     	colors[Map.Terrain.NON_TERRAIN.ordinal()] 	= WHITE;
     }
+	
+	private static int colorToInt(Color c) {
+        return
+                (                      255  << 24) |
+                ((int) (c.getRed()   * 255) << 16) |
+                ((int) (c.getGreen() * 255) << 8)  |
+                ((int) (c.getBlue()  * 255));
+    }
     
     public static void initBuffer() {
-    	buffer = new int[Map.MAP_WIDTH * Map.MAP_HEIGHT];
-    	for(int row = 0; row < Map.MAP_HEIGHT; row++) {
-    		for(int col = 0; col < Map.MAP_WIDTH; col++) {
-    			buffer[col + (row * Map.MAP_WIDTH)] = colors[Map.global_map[row][col].ordinal()];
+    	buffer = new int[_width * _height];
+    	for(int row = 0; row < _height; row+= _cellSize) {
+    		for(int col = 0; col < _width; col+= _cellSize) {
+    			
+    			//Needed for cells bigger than 1x1 pixel
+    			for(int cellX = 0; cellX < _cellSize; cellX++) {
+    				for(int cellY = 0; cellY < _cellSize; cellY++) {
+    					buffer[col + cellY + ((row + cellX) * _width)] = 
+    							colors[Map.global_map[row / _cellSize][col / _cellSize].ordinal()];
+    				}
+    			}
     		}
     	}
     }
 
-    public static int[] getUpdatedDisplay() {
+    public int[] getUpdatedDisplay() {
     	int[] map = buffer;
     	Sim_State state = Sim_Main.state_buffer[Sim_Main.ticks  % Sim_Main.STATE_BUFFER_SIZE];
     	
     	//Blue Team
     	for(Structure blue : state.blue_structures) {
-    		for(int row = blue.top_left.y; row <= blue.bottom_left.y; row++) {
-    			for(int col = blue.top_left.x; col <= blue.top_right.x; col++) {
-    				map[col + (row * Map.MAP_WIDTH)] = BLUE_4;
+    		for(int row = blue.top_left.y * _cellSize; row < (blue.bottom_left.y + 1) * _cellSize; row++) {
+    			for(int col = blue.top_left.x * _cellSize; col < (blue.top_right.x + 1) * _cellSize; col++) {
+    				map[col + (row * _width)] = BLUE_4;
     			}
     		}
     	}
@@ -54,14 +79,19 @@ public class Rendering {
     		int color;
     		if(blue.unit_type.type_enum == Unit_Type.TYPE.TYPE_1) color = BLUE_1;
     		else color = (blue.unit_type.type_enum == Unit_Type.TYPE.TYPE_2) ? BLUE_2 : BLUE_3;
-    		map[blue.location.x + (blue.location.y * Map.MAP_WIDTH)] = color;
+    		
+    		for(int row = blue.location.x * _cellSize; row < (blue.location.x + 1) * _cellSize; row++) {
+    			for(int col = blue.location.y * _cellSize; col < (blue.location.y + 1) * _cellSize; col++) {
+    				map[col + (row * _width)] = color;
+    			}
+    		}
     	}
     	
     	//Red Team
     	for(Structure red : state.red_structures) {
-    		for(int row = red.top_left.y; row <= red.bottom_left.y; row++) {
-    			for(int col = red.top_left.x; col <= red.top_right.x; col++) {
-    				map[col + (row * Map.MAP_WIDTH)] = RED_4;
+    		for(int row = red.top_left.y * _cellSize; row <= (red.bottom_left.y + 1) * _cellSize; row++) {
+    			for(int col = red.top_left.x * _cellSize; col <= (red.top_right.x + 1) * _cellSize; col++) {
+    				map[col + (row * _width)] = RED_4;
     			}
     		}
     	}
@@ -69,7 +99,12 @@ public class Rendering {
     		int color;
     		if(red.unit_type.type_enum == Unit_Type.TYPE.TYPE_1) color = RED_1;
     		else color = (red.unit_type.type_enum == Unit_Type.TYPE.TYPE_2) ? RED_2 : RED_3;
-    		map[red.location.x + (red.location.y * Map.MAP_WIDTH)]= color; 
+    		
+    		for(int row = red.location.x * _cellSize; row < (red.location.x + 1) * _cellSize; row++) {
+    			for(int col = red.location.y * _cellSize; col < (red.location.y + 1) * _cellSize; col++) {
+    				map[col + (row * _width)] = color;
+    			}
+    		} 
     	}
     	
     	return map;
