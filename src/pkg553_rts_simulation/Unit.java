@@ -108,6 +108,7 @@ public class Unit extends Sim_Obj implements Cloneable{
                 System.exit(0);
             }
             new_unit.location = location;
+            new_unit.health = new_unit.unit_type.max_health;
             new_units.add(new_unit);
 
         }
@@ -155,8 +156,9 @@ public class Unit extends Sim_Obj implements Cloneable{
                 
                 
             case ATTACKING: {
-                if (distance(enemy_target) > 4){
+                if (distance(enemy_target) > 6){
                     this.unit_state = Unit_State.MOVING;
+                    System.out.println("Enemy is out of range. Starting to move");
                 }
                 else {
                     enemy_target.health -= this.unit_type.damage_max;
@@ -188,7 +190,7 @@ public class Unit extends Sim_Obj implements Cloneable{
     public Unit look_for_enemies(Sim_State state){
         ArrayList<Unit> enemies = player.red ? state.blue_force : state.red_force;
         for (Unit unit: enemies){
-            if ((int)distance(unit) <= 4){
+            if ((int)distance(unit) <= 6){
                 return unit;
             }
         }

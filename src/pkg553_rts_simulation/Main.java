@@ -139,6 +139,7 @@ public class Main extends Application {
             public void run() {
   
                 gold_disbursal();
+                System.out.println("Ticks: " + Sim_Main.ticks);
                 policy_enactment(Sim_Main.red);
                 policy_enactment(Sim_Main.blue);
                 Sim_Main.update_state();
