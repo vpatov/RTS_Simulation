@@ -42,10 +42,10 @@ public class Map {
     static int MAP_HEIGHT;
     static Terrain[][] global_map = null;  //Singleton
     static Sim_Obj[][] unit_map;    //Singleton
-    static Point[] bottom_starting_points;
-    static Point[] top_starting_points; 
-    static Point top_base = new Point(182,21);
-    static Point bottom_base = new Point(21,182);
+    static Point[] red_starting_points;
+    static Point[] blue_starting_points; 
+    static Point blue_base = new Point(182,21);
+    static Point red_base = new Point(21,182);
     static int structure_size = 8;
     static ArrayList<Structure> bottom_structures;
     static ArrayList<Structure> top_structures;
@@ -173,10 +173,10 @@ public class Map {
         
 
         // shamelessly hard-coded
-        bottom_starting_points = new Point[]
-            {new Point(22,149), new Point(45,160), new Point(44,183)};
-        top_starting_points = new Point[]
-            {new Point(149,22), new Point(160,45), new Point(183, 44)};
+        red_starting_points = new Point[]
+            {new Point(22,149), new Point(45,160), new Point(48,182)};
+        blue_starting_points = new Point[]
+            {new Point(149,22), new Point(160,45), new Point(182, 48)};
     }
     
         

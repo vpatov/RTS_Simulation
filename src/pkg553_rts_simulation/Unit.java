@@ -96,7 +96,7 @@ public class Unit extends Sim_Obj implements Cloneable{
     
     public static ArrayList<Unit> create_units(Unit_Type.TYPE type,Player _player, Sim_State state){
         ArrayList<Unit> new_units = new ArrayList<>();
-        Point starting_points[] = _player.red ? Map.top_starting_points : Map.bottom_starting_points;
+        Point starting_points[] = _player.red ? Map.red_starting_points : Map.blue_starting_points;
         
         for (Point point: starting_points){
             Unit new_unit = new Unit(type);
@@ -134,7 +134,7 @@ public class Unit extends Sim_Obj implements Cloneable{
             case MOVING: {
 
                 if (path == null){
-                    path = find_path_to_point(player.red ? Map.bottom_base : Map.top_base, sim_state);
+                    path = find_path_to_point(player.red ? Map.blue_base : Map.red_base, sim_state);
                 }
 
                 if (!path.isEmpty()){
@@ -199,7 +199,7 @@ public class Unit extends Sim_Obj implements Cloneable{
     
     
     public void send_out(Player player, Sim_State sim_state){
-        path = find_path_to_point(player.red? Map.bottom_base: Map.top_base, sim_state);
+        path = find_path_to_point(player.red? Map.blue_base: Map.red_base, sim_state);
         unit_state = Unit_State.MOVING;
     }
     
