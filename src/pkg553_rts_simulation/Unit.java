@@ -208,11 +208,11 @@ public class Unit extends Sim_Obj implements Cloneable{
     public LinkedList<Point> find_path_to_point(Point dest, Sim_State state){
         
         class Node implements Comparable{
-            double cost;
+            int cost;
             Point point;
             Node prev = null;
             
-            public Node(Point point, Node prev, double cost){
+            public Node(Point point, Node prev, int cost){
                 this.point = point;
                 this.prev = prev;
                 this.cost = cost;
@@ -220,10 +220,7 @@ public class Unit extends Sim_Obj implements Cloneable{
             
             @Override
             public int compareTo(Object o){
-                if (this == o)
-                    return 0;
-                Node n = (Node)o;
-                return Double.compare(this.cost, n.cost);
+                return Double.compare(this.cost, ((Node)o).cost);
             }
             
             
@@ -254,7 +251,7 @@ public class Unit extends Sim_Obj implements Cloneable{
                 assert(node.point.equals(location));
                 //path.addFirst(node.point); //not necessary to add the point we are currently at to the path.
                 
-                System.out.println("Path length is: " + path.size());
+                //System.out.println("Path length is: " + path.size());
 
                 this.movement_target = dest;
                 return path;
@@ -272,7 +269,8 @@ public class Unit extends Sim_Obj implements Cloneable{
                 if (!visited.contains(p)){
                     if (Point.check_if_passable(point)){
                         visited.add(p);
-                        to_visit.add(new Node(p,node,Point.distance(p, dest) + node.cost));
+//                        to_visit.add(new Node(p,node,(int)Point.distance(p, dest) + node.cost));
+                        to_visit.add(new Node(p, node, Math.abs(dest.x - p.x) + Math.abs(dest.y - p.y)));
                     }
                 }
             }
