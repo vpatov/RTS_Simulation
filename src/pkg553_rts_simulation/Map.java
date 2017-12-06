@@ -44,6 +44,8 @@ public class Map {
     static Sim_Obj[][] unit_map;    //Singleton
     static Point[] bottom_starting_points;
     static Point[] top_starting_points; 
+    static Point top_base = new Point(182,21);
+    static Point bottom_base = new Point(21,182);
     static int structure_size = 8;
     static ArrayList<Structure> bottom_structures;
     static ArrayList<Structure> top_structures;
@@ -178,65 +180,7 @@ public class Map {
     }
     
         
-    public static boolean check_if_empty_point(
-            Point point, 
-            ArrayList<Point> unit_points, 
-            ArrayList<Structure> structures
-        ){
-        for (Point p: unit_points){
-            if (p.equals(point)){
-                return false;
-            }
-        }
-        for (Structure struct: structures){
-            if (struct.point_is_inside(point)){
-                return false;
-            }
-        }
-        return true;
-        
-    }
-    
-    public static Point find_empty_point(Point point, Sim_State state){
-        HashSet<Point> visited = new HashSet<>();
-        LinkedList<Point> to_visit = new LinkedList<>();
-        ArrayList<Point> unit_points = new ArrayList<>();
-        boolean in_top_half = Point.in_top_half(point);
-        ArrayList<Structure> structures = in_top_half ? state.red_structures : state.blue_structures;
-        
-        for (Unit unit: state.blue_force){
-            unit_points.add(unit.location);
-        }
-        for (Unit unit: state.red_force){
-            unit_points.add(unit.location);
-        }
-        
-        to_visit.add(point);
-        Point result;
-        do {
-            point = to_visit.pop();
-            visited.add(point);
-            
-            if (check_if_empty_point(point,unit_points,structures)){
-                return point;
-            }
-            else {
-                Point neighbors[] = new Point[]
-                    {new Point(point.x+1,point.y), new Point(point.x,point.y+1),
-                     new Point(point.x-1,point.y), new Point(point.x,point.y-1)};
-
-                for (Point p: neighbors){
-                    if (!visited.contains(p)){
-                        to_visit.add(p);
-                    }
-                }
-            }
-        } while(!to_visit.isEmpty());
-        System.out.println("Fatal");
-        return null;
    
-    }
-        
 
     
     

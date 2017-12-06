@@ -81,15 +81,14 @@ public class Sim_Main{
         Map.load_structures();
         Unit_Type.init_unit_types("data/unit_types.txt");
         state_buffer = new Sim_State[STATE_BUFFER_SIZE];
+        state_buffer[0] = new Sim_State();
         red = new Player(true); //red on top
         blue = new Player(false); // blue on bottom
         
-        state_buffer[0] = new Sim_State();
-        state_buffer[0].red_force = new ArrayList<>();
-        state_buffer[0].blue_force = new ArrayList<>();
-        state_buffer[0].red_structures = Map.top_structures;
-        state_buffer[0].blue_structures = Map.bottom_structures;
+        
     }
+    
+    
     
  
     public static void main(String []args){
