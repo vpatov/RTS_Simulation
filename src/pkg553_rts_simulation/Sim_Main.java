@@ -29,8 +29,8 @@ public class Sim_Main{
     static int ticks = 0;
     static int ticks_since_last_arrival = 0;
     static int current_gold_index = 0;
-    static int gold_arrival[] = {2,2,2,4,2,4,5,10,8}; //test values
-    static int gold_values[] = {100,150,80,51,54,39,95,87,70};
+    static int gold_arrival[] = {2,8,12,4,8,9,13,5,8}; //test values
+    static int gold_values[] = {100,150,80,250,100,290,180,240,170};
     static Player red, blue;
     
     
@@ -65,7 +65,7 @@ public class Sim_Main{
         }
         if (Unit.count_units_in_state(force, Unit.Unit_State.IDLE) >= player.policy.max_idle_units ){
             for (Unit unit: force){
-                if (unit.state == Unit.Unit_State.IDLE)
+                if (unit.unit_state == Unit.Unit_State.IDLE)
                     unit.send_out(player,current);
             }
         }

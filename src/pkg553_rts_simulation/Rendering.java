@@ -21,22 +21,24 @@ public class Rendering {
 	static int _cellSize;
 	static int _height;
 	static int _width;
+        static int _unitSize;
 	
-	public Rendering(int width, int height, int cellSize) {
+	public Rendering(int width, int height, int cellSize, int unitSize) {
 		_cellSize = cellSize;
 		_height = height;
 		_width = width;
+                _unitSize = unitSize;
 		
 		initColors();
 		initBuffer();
 	}
 	
 	public static void initColors() {
-		colors = new int[Map.Terrain.values().length];
-		colors[Map.Terrain.CLIFF.ordinal()] 		= BLACK;
-    	colors[Map.Terrain.GRASS.ordinal()] 		= GREEN;
-    	colors[Map.Terrain.STRUCTURE.ordinal()] 	= WHITE;
-    	colors[Map.Terrain.NON_TERRAIN.ordinal()] 	= WHITE;
+            colors = new int[Map.Terrain.values().length];
+            colors[Map.Terrain.CLIFF.ordinal()] 		= BLACK;
+            colors[Map.Terrain.GRASS.ordinal()] 		= GREEN;
+            colors[Map.Terrain.STRUCTURE.ordinal()] 	= WHITE;
+            colors[Map.Terrain.NON_TERRAIN.ordinal()] 	= WHITE;
     }
 	
 	private static int colorToInt(Color c) {
@@ -64,6 +66,7 @@ public class Rendering {
     }
 
     public int[] getUpdatedDisplay() {
+        initBuffer();
     	int[] map = buffer;
     	Sim_State state = Sim_Main.state_buffer[Sim_Main.ticks  % Sim_Main.STATE_BUFFER_SIZE];
     	
@@ -77,11 +80,18 @@ public class Rendering {
     	}
     	for(Unit blue : state.blue_force) {
     		int color;
-    		if(blue.unit_type.type_enum == Unit_Type.TYPE.TYPE_1) color = BLUE_1;
-    		else color = (blue.unit_type.type_enum == Unit_Type.TYPE.TYPE_2) ? BLUE_2 : BLUE_3;
+                
+                switch(blue.unit_type.type_enum){
+                    case TYPE_1: color = BLUE_1; break;
+                    case TYPE_2: color = BLUE_2; break;
+                    case TYPE_3: color = BLUE_3; break;     
+                    default: color = BLUE_1;
+                }
+//    		if(blue.unit_type.type_enum == Unit_Type.TYPE.TYPE_1) color = BLUE_1;
+//    		else color = (blue.unit_type.type_enum == Unit_Type.TYPE.TYPE_2) ? BLUE_2 : BLUE_3;
     		
-    		for(int row = blue.location.x * _cellSize; row < (blue.location.x + 1) * _cellSize; row++) {
-    			for(int col = blue.location.y * _cellSize; col < (blue.location.y + 1) * _cellSize; col++) {
+    		for(int row = blue.location.x * _cellSize; row < (blue.location.x + _unitSize) * _cellSize; row++) {
+    			for(int col = blue.location.y * _cellSize; col < (blue.location.y + _unitSize) * _cellSize; col++) {
     				map[col + (row * _width)] = color;
     			}
     		}
@@ -97,11 +107,19 @@ public class Rendering {
     	}
     	for(Unit red : state.red_force) {
     		int color;
-    		if(red.unit_type.type_enum == Unit_Type.TYPE.TYPE_1) color = RED_1;
-    		else color = (red.unit_type.type_enum == Unit_Type.TYPE.TYPE_2) ? RED_2 : RED_3;
+                
+                switch(red.unit_type.type_enum){
+                    case TYPE_1: color = RED_1; break;
+                    case TYPE_2: color = RED_2; break;
+                    case TYPE_3: color = RED_3; break;    
+                    default: color = RED_1;
+                }
+                
+//    		if(red.unit_type.type_enum == Unit_Type.TYPE.TYPE_1) color = RED_1;
+//    		else color = (red.unit_type.type_enum == Unit_Type.TYPE.TYPE_2) ? RED_2 : RED_3;
     		
-    		for(int row = red.location.x * _cellSize; row < (red.location.x + 1) * _cellSize; row++) {
-    			for(int col = red.location.y * _cellSize; col < (red.location.y + 1) * _cellSize; col++) {
+    		for(int row = red.location.x * _cellSize; row < (red.location.x + _unitSize) * _cellSize; row++) {
+    			for(int col = red.location.y * _cellSize; col < (red.location.y + _unitSize) * _cellSize; col++) {
     				map[col + (row * _width)] = color;
     			}
     		} 
