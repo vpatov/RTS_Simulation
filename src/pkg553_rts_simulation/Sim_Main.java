@@ -29,7 +29,7 @@ public class Sim_Main{
     static int ticks = 0;
     static int ticks_since_last_arrival = 0;
     static int current_gold_index = 0;
-    static int gold_arrival[] = {2,8,12,2000,8,9,13,5,8}; //test values
+    static int gold_arrival[] = {2,8,12,8,24,9,13,5,8}; //test values
     static int gold_values[] = {100,150,80,250,100,290,180,240,170};
     static Player red, blue;
     
@@ -98,6 +98,14 @@ public class Sim_Main{
         state_buffer[0] = new Sim_State();
         red = new Player(true); //red on top
         blue = new Player(false); // blue on bottom
+        
+        red.policy.max_idle_units = 6;
+        blue.policy.max_idle_units = 0;
+        red.policy.unit_thresholds[2] = 20;
+        red.policy.unit_thresholds[0] = 10;
+        red.policy.gold[2] = Unit_Type.unit_types.get(Unit_Type.TYPE.TYPE_3).gold_cost;
+        
+        
         
         
     }
