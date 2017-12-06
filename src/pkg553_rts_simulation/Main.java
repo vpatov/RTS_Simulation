@@ -9,20 +9,31 @@ import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.image.PixelFormat;
+import javafx.scene.image.PixelWriter;
+import javafx.scene.image.WritablePixelFormat;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+
 import java.util.Random;
+
 import javafx.geometry.Pos;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
 import javafx.scene.control.Slider;
+
 import java.lang.Thread;
+import java.nio.IntBuffer;
+import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
+
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
  
@@ -45,6 +56,14 @@ public class Main extends Application {
     static Random random = new Random();
     static Timer timer;
     
+    private final static WritablePixelFormat<IntBuffer> pixelFormat = PixelFormat.getIntArgbPreInstance();
+    private Canvas canvas;
+    private static GraphicsContext gc;
+    private static Rendering rendering;
+    static int CELL_SIZE = 3;
+    static int CANVAS_WIDTH = X_CELLS * CELL_SIZE;
+    static int CANVAS_HEIGHT = Y_CELLS * CELL_SIZE;
+    
     // TODO kill all threads on application close
     // TODO Improve performance of drawing cells - 
     // take inspiration from 
@@ -59,9 +78,12 @@ public class Main extends Application {
         
         VBox root = new VBox();
         Pane control_pane = initializeControls(800);
-        Pane grid_pane = initializeGrid(X_CELLS,Y_CELLS);
+        canvas = new Canvas(CANVAS_WIDTH, CANVAS_HEIGHT);
+    	gc = canvas.getGraphicsContext2D();
+    	rendering = new Rendering(CANVAS_WIDTH, CANVAS_HEIGHT, CELL_SIZE);
+    	
         root.getChildren().add(control_pane);
-        root.getChildren().add(grid_pane);
+        root.getChildren().add(canvas);
         
         
         Scene scene = new Scene(root, SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -141,14 +163,21 @@ public class Main extends Application {
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                TERRAIN_SEED++;
-//                simul_grid = Map.procedurally_generate_map(TERRAIN_SEED, X_CELLS, Y_CELLS);
-                simul_grid = Map.load_terrain(null);
-                for (int i = 0; i < X_CELLS; i++){
-                    for (int j = 0; j < Y_CELLS; j++){
-                        cells[i][j].setFill(getTerrainColor(simul_grid[i][j]));
-                    }
-                }
+//                TERRAIN_SEED++;
+////                simul_grid = Map.procedurally_generate_map(TERRAIN_SEED, X_CELLS, Y_CELLS);
+//                simul_grid = Map.load_terrain(null);
+//                for (int i = 0; i < X_CELLS; i++){
+//                    for (int j = 0; j < Y_CELLS; j++){
+//                        cells[i][j].setFill(getTerrainColor(simul_grid[i][j]));
+//                    }
+//                }
+            	
+            	gc.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+
+    			int[] buffer = rendering.getUpdatedDisplay();
+
+    			PixelWriter p = gc.getPixelWriter();
+    			p.setPixels(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT, pixelFormat, buffer, 0, CANVAS_WIDTH);
             }
         }, 0, (long)(1000 * slider.getValue()));
     }
