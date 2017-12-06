@@ -36,6 +36,7 @@ public class Unit_Type {
     }
 
     static EnumMap<TYPE, Unit_Type> unit_types;
+    static TYPE[] types;
     
     String name;
     int gold_cost;
@@ -75,17 +76,22 @@ public class Unit_Type {
             while(sc.hasNext()){
                 Unit_Type type = new Unit_Type();
                 type.name = sc.nextLine();
-                type.gold_cost = sc.nextInt();
-                type.damage_min = sc.nextInt();
-                type.damage_max = sc.nextInt();
-                type.armor = sc.nextInt();
+                type.gold_cost = Integer.parseInt(sc.nextLine());
+                type.max_health = Integer.parseInt(sc.nextLine());
+                type.damage_min = Integer.parseInt(sc.nextLine());
+                type.damage_max = Integer.parseInt(sc.nextLine());
+                type.armor = Integer.parseInt(sc.nextLine());
                 type.type_enum = TYPE.values()[type_index++];
                 unit_types.put(type.type_enum,type);
             }
+            types = TYPE.values();
+            System.out.println("Successfully loaded unit types.");
         }
         catch (FileNotFoundException e){
-            
+            System.err.println("Cannot find file: " + filepath);
+            System.exit(1);
         }
+        
     }
 
 }

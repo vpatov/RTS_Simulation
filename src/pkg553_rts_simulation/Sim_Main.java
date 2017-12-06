@@ -33,35 +33,46 @@ public class Sim_Main{
     static int gold_values[] = {60,44,35,51,54,39,95,87,70};
     static Player red, blue;
     
+    
     static public void gold_disbursal(){
-        if (ticks_since_last_arrival == gold_arrival[current_gold_index]){
+        if (ticks_since_last_arrival == 0){
             red.gold += gold_values[current_gold_index];
             blue.gold += gold_values[current_gold_index];
             
-            ticks_since_last_arrival = 0;
+            ticks_since_last_arrival = gold_arrival[current_gold_index];
             current_gold_index = (current_gold_index + 1) % gold_arrival.length;
         }
         else {
-            ticks_since_last_arrival++;
+            ticks_since_last_arrival--;
         }
     }
     
     
-//    public static boolean policy_rule1(Player player, ArrayList<Unit> force){
-//        if (player.gold > player.policy.g1 && 
-//                Unit_Type.count_unit_type(force, Unit_Type.TYPE.TYPE_1) < player.policy.x1) {
-//            
-//            
-//        }
-//    }
+
     
     public static void policy_enactment(Player player){
         Sim_State current = state_buffer[ticks % STATE_BUFFER_SIZE];
         ArrayList<Unit> force = (player.red)?current.red_force:current.blue_force;
+        ArrayList<Unit> new_units = null;
+        for (int i = 0; i < player.policy.gold.length; i++){
+            if (player.gold > player.policy.gold[i] &&
+                Unit_Type.count_unit_type(force, Unit_Type.types[i]) < 
+                    player.policy.unit_thresholds[i]
+                ){
+                new_units = Unit.create_units(Unit_Type.types[i], player, current);
+                force.addAll(new_units);
+            }
+        }
         
-        
-        
-        
+        //if no units of any type were created because of thresholds and not because of gold
+        //we need to make at least some kind of unit.
+         
+    }
+    
+    
+    //movement and attacking
+    public static void update_state(){
+        state_buffer[(ticks + 1) % STATE_BUFFER_SIZE] = state_buffer[ticks % STATE_BUFFER_SIZE];
     }
     
     
@@ -72,6 +83,12 @@ public class Sim_Main{
         state_buffer = new Sim_State[STATE_BUFFER_SIZE];
         red = new Player(true); //red on top
         blue = new Player(false); // blue on bottom
+        
+        state_buffer[0] = new Sim_State();
+        state_buffer[0].red_force = new ArrayList<>();
+        state_buffer[0].blue_force = new ArrayList<>();
+        state_buffer[0].red_structures = Map.top_structures;
+        state_buffer[0].blue_structures = Map.bottom_structures;
     }
     
  
@@ -84,20 +101,13 @@ public class Sim_Main{
             gold_disbursal();
             policy_enactment(red);
             policy_enactment(blue);
-            // 1) if it is time for gold disbursal according to gold interrarival.
-            //      disburse gold
-            // 2) For every unit
-            //      If unit is attacking
-            //          Update the health of the unit that it is attacking
-            //      If unit is moving
-            //          Update the units position
-            //          Update the health regen if necessary
-            //      If unit is idle
-            //          Leave it be
-            // Seems simple but there WILL be bugs. meny bugz.
-            
+
+            System.out.println(red.gold + "," + blue.gold);
+            System.out.println(state_buffer[ticks % STATE_BUFFER_SIZE].red_force);
+            System.out.println(state_buffer[ticks % STATE_BUFFER_SIZE].blue_force);
+                    
+            update_state();
             ticks++;
-            break;
             
             
             

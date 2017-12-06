@@ -51,4 +51,8 @@ public class Point {
     public String toString(){
         return "(" + x + ", " + y + ")";
     }
+    
+    public static boolean in_top_half(Point p){
+        return p.x > p.y;
+    }
 }

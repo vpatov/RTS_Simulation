@@ -25,6 +25,8 @@ import java.util.logging.Logger;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Queue;
 import javax.imageio.ImageIO;
 /**
  *
@@ -43,8 +45,8 @@ public class Map {
     static Point[] bottom_starting_points;
     static Point[] top_starting_points; 
     static int structure_size = 8;
-    static Structure[] bottom_structures;
-    static Structure[] top_structures;
+    static ArrayList<Structure> bottom_structures;
+    static ArrayList<Structure> top_structures;
     
     static final int GRASS_COLOR = -14630848;
     static final int UNPASSABLE_COLOR = -16777216;
@@ -93,10 +95,10 @@ public class Map {
     
     public static void load_structures(){
 
-        bottom_structures = new Structure[4];
-        top_structures = new Structure[4];
+        bottom_structures = new ArrayList<>();
+        top_structures = new ArrayList<>();
 
-        int bottom_structures_index = 0;
+
         //bottom_structures
         for (int i = 0; i < MAP_WIDTH; i++){
             for (int j = i + 1; j < MAP_HEIGHT; j++){
@@ -121,14 +123,13 @@ public class Map {
                     struct.top_right = new Point(i + structure_size-1,j);
                     struct.bottom_left = new Point(i, j+ structure_size-1);
                     struct.bottom_right = new Point(i+ structure_size-1, j + structure_size-1);
-                    bottom_structures[bottom_structures_index++] = struct;
+                    bottom_structures.add(struct);
                 }
             }
 
         }
 
 
-        int top_structures_index = 0;
         //top_structures
         for (int j = 0; j < MAP_HEIGHT; j++){
             for (int i = j + 1; i < MAP_HEIGHT; i++){
@@ -153,23 +154,12 @@ public class Map {
                     struct.top_right = new Point(i + structure_size-1,j);
                     struct.bottom_left = new Point(i, j+ structure_size-1);
                     struct.bottom_right = new Point(i+ structure_size-1, j + structure_size-1);
-                    top_structures[top_structures_index++] = struct;
+                    top_structures.add(struct);
                 }
             }
 
         }
         
-        
-
-        for (Structure struct: bottom_structures){
-            System.out.println(struct.top_left + "," + 
-                    struct.top_right + "," + struct.bottom_left + "," + struct.bottom_right);
-        }
-        
-        for (Structure struct: top_structures){
-            System.out.println(struct.top_left + "," + 
-                    struct.top_right + "," + struct.bottom_left + "," + struct.bottom_right);
-        }
 
         // shamelessly hard-coded
         bottom_starting_points = new Point[]
@@ -178,12 +168,64 @@ public class Map {
             {new Point(149,22), new Point(160,45), new Point(183, 44)};
     }
     
+        
+    public static boolean check_if_empty_point(
+            Point point, 
+            ArrayList<Point> unit_points, 
+            ArrayList<Structure> structures
+        ){
+        for (Point p: unit_points){
+            if (p.equals(point)){
+                return false;
+            }
+        }
+        for (Structure struct: structures){
+            if (struct.point_is_inside(point)){
+                return false;
+            }
+        }
+        return true;
+        
+    }
     
-    public static void find_empty_point(Point point, Sim_State state){
+    public static Point find_empty_point(Point point, Sim_State state){
         HashSet<Point> visited = new HashSet<>();
+        LinkedList<Point> to_visit = new LinkedList<>();
+        ArrayList<Point> unit_points = new ArrayList<>();
+        boolean in_top_half = Point.in_top_half(point);
+        ArrayList<Structure> structures = in_top_half ? state.red_structures : state.blue_structures;
         
+        for (Unit unit: state.blue_force){
+            unit_points.add(unit.location);
+        }
+        for (Unit unit: state.red_force){
+            unit_points.add(unit.location);
+        }
         
-        
+        to_visit.add(point);
+        Point result;
+        do {
+            point = to_visit.pop();
+            visited.add(point);
+            
+            if (check_if_empty_point(point,unit_points,structures)){
+                return point;
+            }
+            else {
+                Point neighbors[] = new Point[]
+                    {new Point(point.x+1,point.y), new Point(point.x,point.y+1),
+                     new Point(point.x-1,point.y), new Point(point.x,point.y-1)};
+
+                for (Point p: neighbors){
+                    if (!visited.contains(p)){
+                        to_visit.add(p);
+                    }
+                }
+            }
+        } while(!to_visit.isEmpty());
+        System.out.println("Fatal");
+        return null;
+   
     }
         
 

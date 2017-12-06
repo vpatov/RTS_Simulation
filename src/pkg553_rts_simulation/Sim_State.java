@@ -31,7 +31,5 @@ public class Sim_State {
     ArrayList<Structure> red_structures;
     ArrayList<Structure> blue_structures;
     
-    public Sim_State(Sim_Obj red[], Sim_Obj blue[]){
-        
-    }
+    
 }

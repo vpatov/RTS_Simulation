@@ -51,17 +51,21 @@ public class Player {
     ArrayList<Point> starting_unit_points;
     
     class Policy {
-        int g1, g2, g3;
-        int x1, x2, x3, x4;
+
+        
+        int gold[];
+        int unit_thresholds[];
+        int max_idle_units;
         
         //most basic default policy
         public Policy(){
-            g1 = 100;
-            g2 = 100;
-            g3 = 100;
-            x1 = 3;
-            x2 = 2;
-            x3 = 1;
+            gold = new int[Unit_Type.types.length];
+            for (int i = 0; i < gold.length; i++){
+                gold[i] = Unit_Type.unit_types.get(Unit_Type.types[i]).gold_cost;
+            }
+            unit_thresholds = new int[]{3,2,1};
+            max_idle_units = 3;
+            
         }
     }
     

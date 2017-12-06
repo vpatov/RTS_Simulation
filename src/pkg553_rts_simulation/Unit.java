@@ -64,6 +64,7 @@ public class Unit extends Sim_Obj{
     Unit_State state;
     ArrayList<Point> intermediary_targets;
     Point movement_target;
+    Point location;
 
     
     
@@ -83,10 +84,25 @@ public class Unit extends Sim_Obj{
     }
     
     
-    static Unit create_units(Unit_Type.TYPE type,Player _player){
-        Unit new_unit = new Unit(type);
-        new_unit.player = _player;
-        return new_unit;
+    public static ArrayList<Unit> create_units(Unit_Type.TYPE type,Player _player, Sim_State state){
+        ArrayList<Unit> new_units = new ArrayList<>();
+        Point starting_points[] = _player.red ? Map.top_starting_points : Map.bottom_starting_points;
+        
+        for (Point point: starting_points){
+            Unit new_unit = new Unit(type);
+            new_unit.player = _player;
+            
+            Point location = Map.find_empty_point(point, state);
+            if (location == null){
+                System.out.println("Map.find_empty_point(" + point +") has failed.");
+                System.exit(0);
+            }
+            new_unit.location = location;
+            new_units.add(new_unit);
+
+        }
+        _player.gold -= Unit_Type.unit_types.get(type).gold_cost;
+        return new_units;
     }
     
     

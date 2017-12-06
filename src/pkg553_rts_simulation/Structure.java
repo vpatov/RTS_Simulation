@@ -27,5 +27,9 @@ public class Structure {
     Point top_left, top_right, bottom_left, bottom_right;
     Player player;
     
+    public boolean point_is_inside(Point p){
+        return Point.point_is_inside(p, top_left, bottom_right);
+    }
+    
     
 }
