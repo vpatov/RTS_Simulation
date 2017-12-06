@@ -141,7 +141,6 @@ public class Main extends Application {
                 gold_disbursal();
                 policy_enactment(Sim_Main.red);
                 policy_enactment(Sim_Main.blue);
-                System.out.println(Sim_Main.red.gold + "," + Sim_Main.blue.gold);
                 Sim_Main.update_state();
                
                 
@@ -152,7 +151,7 @@ public class Main extends Application {
                 PixelWriter p = gc.getPixelWriter();
                 p.setPixels(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT, pixelFormat, buffer, 0, CANVAS_WIDTH);
             }
-        }, 0, 350);
+        }, 0, 150);
     }
     
 
