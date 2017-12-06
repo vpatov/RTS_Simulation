@@ -19,6 +19,9 @@
 package pkg553_rts_simulation;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.PriorityQueue;
 
 /**
  *
@@ -52,7 +55,7 @@ Production Resource Cost
 Current state (either moving, attacking, gathering, building, idle)
 
 */
-public class Unit extends Sim_Obj{
+public class Unit extends Sim_Obj implements Cloneable{
     
     public enum Unit_State {
         MOVING,ATTACKING,IDLE,DEAD;
@@ -62,11 +65,11 @@ public class Unit extends Sim_Obj{
     Player player;
     int health;
     Unit_State state;
-    ArrayList<Point> intermediary_targets;
+    LinkedList<Point> path;
     Point movement_target;
+    Unit enemy_target;
     Point location;
 
-    
     
     
     //constructors
@@ -92,7 +95,7 @@ public class Unit extends Sim_Obj{
             Unit new_unit = new Unit(type);
             new_unit.player = _player;
             
-            Point location = Map.find_empty_point(point, state);
+            Point location = Point.find_empty_point(point, state);
             if (location == null){
                 System.out.println("Map.find_empty_point(" + point +") has failed.");
                 System.exit(0);
@@ -105,21 +108,125 @@ public class Unit extends Sim_Obj{
         return new_units;
     }
     
-    
-    public void send_out(){
+    //is it returning a copy of a new unit?
+    public void update_state(Sim_State state){
+        
+        ArrayList<Unit> enemy_units = player.red ? state.blue_force : state.red_force;
+        switch (this.state){
+            
+            //if its moving, but it discovers an enemy nearby, it should switch to attacking.
+            case MOVING:
+                {
+                    if (path == null){
+                        path = find_path_to_point(player.red ? Map.bottom_base : Map.top_base, state);
+                    }
+                    
+                    if (!path.isEmpty()){
+                        Point next = path.pop();
+                        location = next;
+                    }
+                    
+
+                    
+                }
+                
+                break;
+            case ATTACKING:
+                break;
+            case IDLE:
+                break;
+                
+                       
+        }
+        
         
     }
     
-    public ArrayList<Point> find_path_to_point(Point dest){
+    
+    public void send_out(Player player, Sim_State state){
+        for (Unit unit: (player.red) ? state.red_force : state.blue_force){
+            unit.path = find_path_to_point(player.red? Map.bottom_base: Map.top_base, state);
+            unit.state = Unit_State.MOVING;
+        }
+    }
+    
+    
+    // find a path from dest to s
+    public LinkedList<Point> find_path_to_point(Point dest, Sim_State state){
+        
+        class Node implements Comparable{
+            double cost;
+            Point point;
+            Node prev = null;
+            
+            public Node(Point point, Node prev, double cost){
+                this.point = point;
+                this.prev = prev;
+                this.cost = cost;
+            }
+            
+            @Override
+            public int compareTo(Object o){
+                if (this == o)
+                    return 0;
+                Node n = (Node)o;
+                return Double.compare(this.cost, n.cost);
+            }
+            
+            
+            
+        }
+        
+        Point point;
+        Node node;
+        double cost = 0;
+        
+        PriorityQueue<Node> to_visit = new PriorityQueue<>();
+        LinkedList<Point> path = new LinkedList<>();
+        ArrayList<Point> unit_points = new ArrayList<>();
+        HashSet<Point> visited = new HashSet<>();
+
+          
+        do {
+            node = to_visit.remove();
+            point = node.point;
+            visited.add(node.point);
+            
+            if (node.point.equals(dest)){
+                while (node.prev != null){
+                    path.addFirst(node.point);
+                    node = node.prev;
+                }
+                assert(node.point.equals(location));
+                //path.addFirst(node.point); //not necessary to add the point we are currently at to the path.
+                return path;
+                
+                
+            }
+            
+            //calculate cost of including neighbors in path
+            
+            Point neighbors[] = new Point[]
+                    {new Point(point.x+1,point.y), new Point(point.x,point.y+1),
+                     new Point(point.x-1,point.y), new Point(point.x,point.y-1)};
+            
+            for (Point p: neighbors){
+                if (!visited.contains(p)){
+                    if (Point.check_if_passable(point)){
+                        to_visit.add(new Node(p,node,Point.distance(p, node.point) + node.cost));
+                    }
+                }
+            }
+            
+        } while(!to_visit.isEmpty());
+        
+        System.err.println("Pathfinding couldn't find path.");
         return null;
     }
             
     
     
-    //methods
-    public void move(){
-        
-    }
+
     
 
     

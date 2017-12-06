@@ -31,5 +31,13 @@ public class Sim_State {
     ArrayList<Structure> red_structures;
     ArrayList<Structure> blue_structures;
     
+    public Sim_State(){
+        red_force = new ArrayList<>();
+        blue_force = new ArrayList<>();
+        red_structures = new ArrayList<>();
+        blue_structures = new ArrayList<>();
+    }
     
 }
+
+
