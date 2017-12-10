@@ -163,6 +163,7 @@ public class Unit extends Sim_Obj implements Cloneable{
                 else {
                     enemy_target.health -= this.unit_type.damage_max;
                     System.out.println("Just hit enemy at " + enemy_target.location + " for " + unit_type.damage_max);
+                    Statistics.updateDamage(!this.player.red, this.unit_type.damage_max);
                             
                     if (enemy_target.health <= 0){
                         enemies.remove(enemy_target);

@@ -15,11 +15,9 @@ import javafx.scene.control.Button;
 import javafx.scene.image.PixelFormat;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritablePixelFormat;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
 
 import java.util.Random;
 
@@ -28,17 +26,12 @@ import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
 import javafx.scene.control.Slider;
 
-import java.lang.Thread;
 import java.nio.IntBuffer;
-import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import static pkg553_rts_simulation.Sim_Main.gold_disbursal;
 import static pkg553_rts_simulation.Sim_Main.policy_enactment;
-import static pkg553_rts_simulation.Sim_Main.red;
  
 
 /**
@@ -144,7 +137,7 @@ public class Main extends Application {
                 policy_enactment(Sim_Main.blue);
                 Sim_Main.update_state();
                
-                
+                if (Sim_Main.ticks % 50 == 0) System.out.println(Sim_Main.StatsSummary());
                 
             	gc.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
                 int[] buffer = rendering.getUpdatedDisplay();
