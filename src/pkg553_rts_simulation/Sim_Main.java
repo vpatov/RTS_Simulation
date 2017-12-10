@@ -99,11 +99,28 @@ public class Sim_Main{
         red = new Player(true); //red on top
         blue = new Player(false); // blue on bottom
         
-        red.policy.max_idle_units = 6;
+//        red.policy.max_idle_units = 6;
+//        blue.policy.max_idle_units = 0;
+//        red.policy.unit_thresholds[2] = 20;
+//        red.policy.unit_thresholds[0] = 10;
+//        red.policy.gold[2] = Unit_Type.unit_types.get(Unit_Type.TYPE.TYPE_3).gold_cost;
+        
+        
+        red.policy.max_idle_units = 24;
         blue.policy.max_idle_units = 0;
         red.policy.unit_thresholds[2] = 20;
-        red.policy.unit_thresholds[0] = 10;
+        red.policy.unit_thresholds[0] = 0;
+        red.policy.unit_thresholds[1] = 0;
         red.policy.gold[2] = Unit_Type.unit_types.get(Unit_Type.TYPE.TYPE_3).gold_cost;
+        
+//        blue.policy.max_idle_units = 24;
+//        red.policy.max_idle_units = 0;
+//        blue.policy.unit_thresholds[2] = 20;
+//        blue.policy.unit_thresholds[0] = 0;
+//        blue.policy.unit_thresholds[1] = 0;
+//        blue.policy.gold[2] = Unit_Type.unit_types.get(Unit_Type.TYPE.TYPE_3).gold_cost;
+        
+        
         
     }
     
