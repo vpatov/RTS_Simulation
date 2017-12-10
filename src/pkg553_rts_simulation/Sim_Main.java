@@ -32,12 +32,13 @@ public class Sim_Main{
     static int gold_arrival[] = {2,8,12,8,24,9,13,5,8}; //test values
     static int gold_values[] = {100,150,80,250,100,290,180,240,170};
     static Player red, blue;
-    
+    static Statistics stats = new Statistics();
     
     static public void gold_disbursal(){
         if (ticks_since_last_arrival == 0){
             red.gold += gold_values[current_gold_index];
             blue.gold += gold_values[current_gold_index];
+            stats.totalGold += gold_values[current_gold_index];
             
             ticks_since_last_arrival = gold_arrival[current_gold_index];
             current_gold_index = (current_gold_index + 1) % gold_arrival.length;
@@ -61,6 +62,9 @@ public class Sim_Main{
                 ){
                 new_units = Unit.create_units(Unit_Type.types[i], player, current);
                 force.addAll(new_units);
+                
+                if (player == blue) stats.unitsBuiltBlue += new_units.size();
+                else stats.unitsBuiltRed += new_units.size();
             }
         }
         if (Unit.count_units_in_state(force, Unit.Unit_State.IDLE) >= player.policy.max_idle_units ){
@@ -146,8 +150,35 @@ public class Sim_Main{
 //            System.out.println(state_buffer[ticks % STATE_BUFFER_SIZE].blue_force);
                     
             update_state();
-
         }
     }
     
+    public static String StatsSummary() {
+    	Sim_State current = state_buffer[ticks % STATE_BUFFER_SIZE];
+    	
+    	int buildingHealthBlue = 0, buildingHealthRed = 0;
+    	int enemyTerritoryUnitsBlue = 0;
+    	int enemyTerritoryUnitsRed = 0;
+		int unitsLostBlue = stats.unitsBuiltBlue - current.blue_force.size();
+		int unitsLostRed = stats.unitsBuiltRed - current.red_force.size();
+		
+//		for (Structure b : current.blue_structures) { buildingHealthBlue += b.health; }
+//		for (Structure r : current.red_structures) 	{ buildingHealthRed += r.health; }
+		for (Unit b : current.blue_force) { 
+			if (b.location.y > b.location.x) enemyTerritoryUnitsBlue++; 
+		}
+		for (Unit r : current.red_force) { 
+			if (r.location.y < r.location.x) enemyTerritoryUnitsRed++; 
+		}
+		
+		String summary = "Player\tGold Collected\tGold Spent\tUnits Built\tUnits Lost\tBuildings Standing\tBuilding Health\tDamage "
+				+ "Dealt\tUnits in Enemy Territory";
+		String summaryBlue = String.format("%s\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d",
+				"Blue", stats.totalGold, stats.totalGold - blue.gold, stats.unitsBuiltBlue, unitsLostBlue, 
+				current.blue_structures.size(), buildingHealthBlue, stats.damageDealtBlue, enemyTerritoryUnitsBlue);
+		String summaryRed =String.format("%s\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d",
+				"Red", stats.totalGold, stats.totalGold - red.gold, stats.unitsBuiltRed, unitsLostRed, 
+				current.red_structures.size(), buildingHealthRed, stats.damageDealtRed, enemyTerritoryUnitsRed);
+		return summary + "\n" + summaryBlue + "\n" + summaryRed;
+	}
 }
