@@ -128,7 +128,7 @@ public class Main extends Application {
         
         hbox.setAlignment(Pos.CENTER);
         hbox.setSpacing(30);
-        hbox.setMinHeight(100);
+        hbox.setMinHeight(50);
         return hbox;
     }
     
@@ -152,7 +152,7 @@ public class Main extends Application {
                 PixelWriter p = gc.getPixelWriter();
                 p.setPixels(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT, pixelFormat, buffer, 0, CANVAS_WIDTH);
             }
-        }, 0, 150);
+        }, 0, 100);
     }
     
 
