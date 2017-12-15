@@ -153,7 +153,7 @@ public class Sim_Main{
         }
     }
     
-    public static String StatsSummary() {
+    public static void StatsSummary() {
     	Sim_State current = state_buffer[ticks % STATE_BUFFER_SIZE];
     	
     	int buildingHealthBlue = 0, buildingHealthRed = 0;
@@ -171,14 +171,15 @@ public class Sim_Main{
 			if (r.location.y < r.location.x) enemyTerritoryUnitsRed++; 
 		}
 		
-		String summary = "Player\tGold Collected\tGold Spent\tUnits Built\tUnits Lost\tBuildings Standing\tBuilding Health\tDamage "
-				+ "Dealt\tUnits in Enemy Territory";
-		String summaryBlue = String.format("%s\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d",
-				"Blue", stats.totalGold, stats.totalGold - blue.gold, stats.unitsBuiltBlue, unitsLostBlue, 
+//		String summary = "Player\tGold Collected\tGold Spent\tUnits Built\tUnits Lost\tBuildings Standing\tBuilding Health\tDamage "
+//				+ "Dealt\tUnits in Enemy Territory";
+		String summaryBlue = String.format("%d,%d,%d,%d,%d,%d,%d,%d",
+				stats.totalGold, stats.totalGold - blue.gold, stats.unitsBuiltBlue, unitsLostBlue, 
 				current.blue_structures.size(), buildingHealthBlue, stats.damageDealtBlue, enemyTerritoryUnitsBlue);
-		String summaryRed =String.format("%s\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d",
-				"Red", stats.totalGold, stats.totalGold - red.gold, stats.unitsBuiltRed, unitsLostRed, 
+		String summaryRed =String.format("%d,%d,%d,%d,%d,%d,%d,%d",
+				stats.totalGold, stats.totalGold - red.gold, stats.unitsBuiltRed, unitsLostRed, 
 				current.red_structures.size(), buildingHealthRed, stats.damageDealtRed, enemyTerritoryUnitsRed);
-		return summary + "\n" + summaryBlue + "\n" + summaryRed;
+//		return summary + "\n" + summaryBlue + "\n" + summaryRed;
+		stats.appendToStatsFile(summaryBlue + "," + summaryRed + "\n");
 	}
 }

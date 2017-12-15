@@ -137,7 +137,8 @@ public class Main extends Application {
                 policy_enactment(Sim_Main.blue);
                 Sim_Main.update_state();
                
-                if (Sim_Main.ticks % 50 == 0) System.out.println(Sim_Main.StatsSummary());
+//                if (Sim_Main.ticks % 50 == 0) System.out.println(Sim_Main.StatsSummary());
+                Sim_Main.StatsSummary();
                 
             	gc.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
                 int[] buffer = rendering.getUpdatedDisplay();
