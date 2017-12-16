@@ -137,8 +137,6 @@ public class Sim_Main{
 
        
         init_players();
-
-        System.out.println(red.structures.get(0).player);
         
         red.policy.max_idle_units = 18;
         blue.policy.max_idle_units = 0;
