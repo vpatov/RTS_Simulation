@@ -21,6 +21,18 @@ package pkg553_rts_simulation;
  *
  * @author Simulation533
  */
+
+import java.util.ArrayList;
+import java.util.Random;
+
 public class StochasticInput {
+    
+    static Random random_point = new Random(5);
+    
+    
+    public static int pick_point(int length){
+        return random_point.nextInt(length);
+    }
+    
     
 }

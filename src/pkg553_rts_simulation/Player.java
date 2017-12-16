@@ -59,6 +59,9 @@ public class Player {
     ArrayList<Structure> enemy_dead_structures;
     ArrayList<Unit> enemy_force;
     
+    boolean trigger_sendout = false;
+
+    
     Point[] starting_unit_points;
     
     class Policy {

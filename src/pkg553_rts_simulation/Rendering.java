@@ -157,30 +157,30 @@ public class Rendering {
         
         
         
-        for (Structure struct: Sim_Main.red.structures){
-            for (Point p: new Point[]{struct.top_left, struct.top_right, struct.bottom_left, struct.bottom_right, struct.location}){
-//                System.out.println("Render red_structures");
-//                System.out.println(struct.top_left + "," + struct.top_right + "," + struct.bottom_left + "," + struct.bottom_right + "," + struct.location);
-                for(int row = p.x * _cellSize; row < (p.x + _unitSize) * _cellSize; row++) {
-                    for(int col = p.y * _cellSize; col < (p.y + _unitSize) * _cellSize; col++) {
-                            map[col + (row * _width)] = RED_STRUCT_CENTER;
-                    }
-                } 
-            }
-        }
+//        for (Structure struct: Sim_Main.red.structures){
+//            for (Point p: new Point[]{struct.top_left, struct.top_right, struct.bottom_left, struct.bottom_right, struct.location}){
+////                System.out.println("Render red_structures");
+////                System.out.println(struct.top_left + "," + struct.top_right + "," + struct.bottom_left + "," + struct.bottom_right + "," + struct.location);
+//                for(int row = p.x * _cellSize; row < (p.x + _unitSize) * _cellSize; row++) {
+//                    for(int col = p.y * _cellSize; col < (p.y + _unitSize) * _cellSize; col++) {
+//                            map[col + (row * _width)] = RED_STRUCT_CENTER;
+//                    }
+//                } 
+//            }
+//        }
         
 
-        for (Structure struct: Sim_Main.blue.structures){
-            for (Point p: new Point[]{struct.top_left, struct.top_right, struct.bottom_left, struct.bottom_right, struct.location}){
-//                System.out.println("Render blue_structures");
-//                System.out.println(struct.top_left + "," + struct.top_right + "," + struct.bottom_left + "," + struct.bottom_right + "," + struct.location);
-                for(int row = p.x * _cellSize; row < (p.x + _unitSize) * _cellSize; row++) {
-                    for(int col = p.y * _cellSize; col < (p.y + _unitSize) * _cellSize; col++) {
-                            map[col + (row * _width)] = BLUE_STRUCT_CENTER;
-                    }
-                } 
-            }
-        }
+//        for (Structure struct: Sim_Main.blue.structures){
+//            for (Point p: new Point[]{struct.top_left, struct.top_right, struct.bottom_left, struct.bottom_right, struct.location}){
+////                System.out.println("Render blue_structures");
+////                System.out.println(struct.top_left + "," + struct.top_right + "," + struct.bottom_left + "," + struct.bottom_right + "," + struct.location);
+//                for(int row = p.x * _cellSize; row < (p.x + _unitSize) * _cellSize; row++) {
+//                    for(int col = p.y * _cellSize; col < (p.y + _unitSize) * _cellSize; col++) {
+//                            map[col + (row * _width)] = BLUE_STRUCT_CENTER;
+//                    }
+//                } 
+//            }
+//        }
 
     	return map;
     }

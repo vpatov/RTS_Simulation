@@ -57,6 +57,8 @@ Current state (either moving, attacking, gathering, building, idle)
 
 */
 public class Unit extends Sim_Obj implements Cloneable{
+
+    
     
     public enum Unit_State {
         MOVING,ATTACKING,IDLE,DEAD;
@@ -68,6 +70,7 @@ public class Unit extends Sim_Obj implements Cloneable{
     LinkedList<Point> path;
     Point movement_target;
     Sim_Obj enemy_target;
+    static int structure_target_index;
 
     
     
@@ -90,26 +93,34 @@ public class Unit extends Sim_Obj implements Cloneable{
     
     public static ArrayList<Unit> create_units(Unit_Type.TYPE type,Player _player){
         ArrayList<Unit> new_units = new ArrayList<>();
-        Point starting_points[] = _player.red ? Map.red_starting_points : Map.blue_starting_points;
+        Point starting_points[] = _player.starting_unit_points;
+        Point point;
+        int index;
         
-        for (Point point: starting_points){
+        for (int i = 0; i < _player.structures.size(); i++){
             Unit new_unit = new Unit(type);
             new_unit.player = _player;
+            
+            index = StochasticInput.pick_point(starting_points.length);
+            point = starting_points[index];
             
             Point location = Point.find_empty_point(point);
             if (location == null){
                 System.out.println("Map.find_empty_point(" + point +") has failed.");
                 System.exit(0);
             }
+            
             new_unit.location = location;
             new_unit.health = new_unit.unit_type.max_health;
             new_units.add(new_unit);
-
         }
+        
         _player.gold -= Unit_Type.unit_types.get(type).gold_cost;
         return new_units;
     }
     
+    
+
     public static int count_units_in_state(Collection<Unit> units, Unit_State unit_state){
         int count = 0;
         for (Unit unit: units){
@@ -130,7 +141,7 @@ public class Unit extends Sim_Obj implements Cloneable{
             case MOVING: {
 
                 if (path == null){
-                    path = find_path_to_point(player.enemy.corner);
+                    send_out();
                 }
 
                 if (!path.isEmpty()){
@@ -145,6 +156,7 @@ public class Unit extends Sim_Obj implements Cloneable{
                 if (struct != null){
                     this.unit_state = Unit_State.ATTACKING;
                     this.enemy_target = struct;
+                    this.path = null;
                     break;
                 }
                 
@@ -160,7 +172,7 @@ public class Unit extends Sim_Obj implements Cloneable{
                 
                 
             case ATTACKING: {
-                int min_target_distance = enemy_target.type == Sim_Obj.Type.UNIT ? 6:9;
+                int min_target_distance = enemy_target.type == Sim_Obj.Type.UNIT ? 12:15;
                 
                 if (distance(enemy_target) > min_target_distance){
                     this.unit_state = Unit_State.MOVING;
@@ -168,6 +180,9 @@ public class Unit extends Sim_Obj implements Cloneable{
                 }
                 else {
                     enemy_target.health -= this.unit_type.damage_max;
+                    if (enemy_target.type == Sim_Obj.Type.STRUCTURE){
+                        player.enemy.trigger_sendout = true;
+                    }
 //                    System.out.println((player.red?"Red":"Blue") + " unit at " + location + "just hit enemy " +(enemy_target.type == Sim_Obj.Type.UNIT ? "unit":"structure")+ " at " + enemy_target.location + " for " + unit_type.damage_max);
                     Statistics.updateDamage(!this.player.red, this.unit_type.damage_max);
                             
@@ -176,8 +191,14 @@ public class Unit extends Sim_Obj implements Cloneable{
                             enemies.remove(enemy_target);
                         }
                         else{
-                            enemy_structures.remove(enemy_target);
-                            enemy_dead_structures.add((Structure)enemy_target);
+                            Structure enemy_structure = (Structure)enemy_target;
+                            enemy_structures.remove(enemy_structure);
+                            enemy_dead_structures.add(enemy_structure);
+                            for (int x = enemy_structure.top_left.x; x <= enemy_structure.bottom_right.x; x++){
+                                for (int y = enemy_structure.top_left.y; y <= enemy_structure.bottom_right.y; y++){
+                                    Map.global_map[x][y] = Map.Terrain.GRASS;
+                                }
+                            }
                         }
                             
                         enemy_target = null;
@@ -193,6 +214,10 @@ public class Unit extends Sim_Obj implements Cloneable{
                     if (unit != null){
                         this.unit_state = Unit_State.ATTACKING;
                         this.enemy_target = unit;
+                    }
+                    
+                    if (player.trigger_sendout){
+                        send_out();
                     }
                 break;
             }
@@ -222,8 +247,9 @@ public class Unit extends Sim_Obj implements Cloneable{
     }
     
     /** @TODO generate starting points */
-    public void send_out(Player player){
-        path = find_path_to_point(player.enemy.corner);
+    public void send_out(){
+        structure_target_index = (structure_target_index + 1) % player.enemy_structures.size();
+        path = find_path_to_point(player.enemy_structures.get(structure_target_index).location);
         unit_state = Unit_State.MOVING;
     }
     
@@ -305,7 +331,7 @@ public class Unit extends Sim_Obj implements Cloneable{
         return null;
     }
             
-    
+
     
     
     
