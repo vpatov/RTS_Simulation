@@ -25,6 +25,7 @@ public class Sim_Main{
     static int MAP_WIDTH = 200;
     static int MAP_HEIGHT = 200;
 
+    
     static int ticks = 0;
     static int ticks_until_next_arrival = 0;
     static Player red, blue;
@@ -131,6 +132,9 @@ public class Sim_Main{
     }
     
     public static void init_simulation(){
+        ticks = 0;
+        ticks_until_next_arrival = 0;
+
         Map.load_terrain("maps/map_01_mirrored.bmp");
         Unit_Type.init_unit_types("params/unit_types.txt");
         Map.load_structures();
@@ -138,12 +142,12 @@ public class Sim_Main{
        
         init_players();
         
-        red.policy.max_idle_units = 18;
-        blue.policy.max_idle_units = 0;
-        red.policy.unit_thresholds[2] = 20;
-        red.policy.unit_thresholds[0] = 0;
-        red.policy.unit_thresholds[1] = 0;
-        red.policy.gold[2] = Unit_Type.unit_types.get(Unit_Type.TYPE.TYPE_3).gold_cost;
+//        red.policy.max_idle_units = 18;
+//        blue.policy.max_idle_units = 0;
+//        red.policy.unit_thresholds[2] = 20;
+//        red.policy.unit_thresholds[0] = 0;
+//        red.policy.unit_thresholds[1] = 0;
+//        red.policy.gold[2] = Unit_Type.unit_types.get(Unit_Type.TYPE.TYPE_3).gold_cost;
         
         
     }
@@ -152,6 +156,7 @@ public class Sim_Main{
     
  
     public static void main(String []args){
+        
         
         init_simulation();
         
