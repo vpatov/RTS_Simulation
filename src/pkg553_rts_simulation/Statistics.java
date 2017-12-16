@@ -127,7 +127,6 @@ public class Statistics {
 			e.printStackTrace();
             }
 	    
-	    append_to_file(STATS_FILE, header);
         }
         
 	

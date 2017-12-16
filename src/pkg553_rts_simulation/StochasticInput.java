@@ -90,7 +90,7 @@ public class StochasticInput {
         lgc = 3;    ltc = 3;    lps = 1; 
         lgs = 1;    lts = 1;    ltm = 1;
         
-        bgc = 30;   btc = 20;   bps = 1;
+        bgc = 20;   btc = 30;   bps = 1;
         bgs = 1;    bts = 1;    btm = 10;
 
         stchs = new StochasticInput[lgc * ltc * lps * lgs * lts * ltm];

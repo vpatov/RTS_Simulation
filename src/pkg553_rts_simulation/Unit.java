@@ -231,7 +231,7 @@ public class Unit extends Sim_Obj implements Cloneable{
     public Unit look_for_enemies(){
         ArrayList<Unit> enemies = player.enemy_force;
         for (Unit unit: enemies){
-            if ((int)distance(unit) <= 6){
+            if (Point.manhattan_distance(location,unit.location) <= 6){
                 return unit;
             }
         }

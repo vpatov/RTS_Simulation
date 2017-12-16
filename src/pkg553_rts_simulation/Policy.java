@@ -26,7 +26,7 @@ public class Policy {
 
 
     int gold[];
-    int unit_thresholds[];
+    double unit_thresholds[];
     int max_idle_units;
 
     //most basic default policy
@@ -35,13 +35,13 @@ public class Policy {
         for (int i = 0; i < gold.length; i++){
             gold[i] = Unit_Type.unit_types.get(Unit_Type.types[i]).gold_cost;
         }
-        unit_thresholds = new int[]{20,10,5};
+        unit_thresholds = new double[]{.2, .1, 1 - (.1 + .2)};
         max_idle_units = 3;
     }
     
-    public Policy(int g1, int g2, int g3, int t1, int t2, int t3, int idle){
+    public Policy(int g1, int g2, int g3, double t1, double t2, double t3, int idle){
         gold = new int[]{g1,g2,g3};
-        unit_thresholds = new int[]{t1,t2,t3};
+        unit_thresholds = new double[]{t1,t2,t3};
         max_idle_units = idle;
     }
 
@@ -49,22 +49,23 @@ public class Policy {
     //Very similar to 
     static Policy[] generate_configurations(){
         Policy[] policies;
-        int g1, g2, g3, t1, t2, t3, idle; //Policy constructor arguments
-        int lg1, lg2, lg3, lt1, lt2, lt3, lidle; //how many different values for each of the arguments we will iterate through
-        int bg1, bg2, bg3, bt1, bt2, bt3, bidle; //the base value. we iterate through multiples of the base value.
+        int g1, g2, g3, idle; //Policy constructor arguments
+
+        int lg1, lg2, lg3,  lidle; //how many different values for each of the arguments we will iterate through
+        int bg1, bg2, bg3, bidle; //the base value. we iterate through multiples of the base value.
+        
+        int thresh_varieties = 21;
         
         /*
             handpicked, doesn't have to be these values, but they seemed good
         */
         lg1 = 3;   lg2 = 3;    lg3 = 3; 
-        lt1 = 3;   lt2 = 3;    lt3 = 3;
-        lidle = 5;
+        lidle = 3;
         
-        bg1 = 60;   bg2 = 80;   bg3 = 200;
-        bt1 = 5;    bt2 = 5;    bt3 = 5;
+        bg1 = 50;   bg2 = 50;   bg3 = 50;
         bidle = 4;
 
-        policies = new Policy[lg1 * lg2 * lg3 * lt1 * lt2 * lt3 * lidle];
+        policies = new Policy[lg1 * lg2 * lg3 * lidle * thresh_varieties];
         
         int index = 0;
         for (int i = 1; i <= lg1; i++){
@@ -73,16 +74,12 @@ public class Policy {
                 g2 = (bg2 * j);
                 for (int k = 1; k <= lg3; k++){
                     g3 = (bg3 * k);
-                    for (int l = 1; l <= lt1; l++){
-                        t1 = (bt1 * l);
-                        for (int m = 1; m <= lt2;  m++){
-                            t2 = (bt2 * m);
-                            for (int n = 1; n <= lt3; n++){
-                                t3 = (bt3 * n);
-                                for (int o = 1; o <= lidle; o++){
-                                    idle = (bidle * o);
-                                        policies[index++] = new Policy(g1,g2,g3,t1,t2,t3,idle);
-                                }
+                    for (int l = 1; l <= lidle; l++){
+                        idle = (bidle * l);
+                        for(double t1 = 0; t1 <= 1; t1 += 0.2){
+                            for (double t2 = 0; t2 + t1 <= 1; t2 += 0.2){
+                                double t3 = (1 - t1 - t2);
+                                policies[index++] = new Policy(g1,g2,g3,t1,t2,t3,idle);
                             }
                         }
                     }
@@ -95,9 +92,7 @@ public class Policy {
     
     @Override
     public String toString(){
-        return        gold[0] + "," + gold[1] + "," + gold[2] + 
-                "," + unit_thresholds[0] + "," + unit_thresholds[1] + "," + unit_thresholds[2] + 
-                "," + max_idle_units;
+        return String.format("%d %d %d %.2f %.2f %.2f %d", gold[0], gold[1], gold[2], unit_thresholds[0], unit_thresholds[1], unit_thresholds[2], max_idle_units);
     }
 
     

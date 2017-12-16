@@ -54,6 +54,8 @@ public class Player {
     ArrayList<Structure> dead_structures;
     ArrayList<Unit> force;
     
+    long rule_num = 0;
+    
     Player enemy;
     ArrayList<Structure> enemy_structures;
     ArrayList<Structure> enemy_dead_structures;

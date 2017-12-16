@@ -58,11 +58,15 @@ public class Sim_Main{
 
     
     public static void policy_enactment(Player player){
+        int i;
         ArrayList<Unit> new_units = null;
-        for (int i = 0; i < player.policy.gold.length; i++){
-            if (player.gold > player.policy.gold[i] &&
-                Unit_Type.count_unit_type(player.force, Unit_Type.types[i]) < 
-                    player.policy.unit_thresholds[i]
+        double tot_units = (double)player.force.size();
+        for (int m = 0; m < player.policy.gold.length; m++){
+            i = (int)(player.rule_num % (player.policy.gold.length));
+            player.rule_num += 1;
+            if (player.gold > player.policy.gold[i] && 
+                (Unit_Type.count_unit_type(player.force, Unit_Type.types[i]) / tot_units <= 
+                    player.policy.unit_thresholds[i] || tot_units == 0)
                 ){
                 new_units = Unit.create_units(Unit_Type.types[i], player);
                 player.force.addAll(new_units);
@@ -103,30 +107,28 @@ public class Sim_Main{
         
         if (red.structures.isEmpty()){
             winner = blue;
-            
-            String data = String.format("%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d\n", simul_count, ticks,
-            		System.currentTimeMillis(), red.policy.gold[0], red.policy.unit_thresholds[0], red.policy.gold[1], 
-            		red.policy.unit_thresholds[1], red.policy.gold[2], red.policy.unit_thresholds[2], red.policy.max_idle_units,
-            		blue.policy.gold[0], blue.policy.unit_thresholds[0], blue.policy.gold[1], blue.policy.unit_thresholds[1], 
-            		blue.policy.gold[2], blue.policy.unit_thresholds[2], blue.policy.max_idle_units, ticks);
-            stats.append_to_file(Statistics.LOSS_FILE, data);
         }
         if (blue.structures.isEmpty()){
             winner = red;
-            
-            String data = String.format("%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d\n", simul_count, ticks,
-            		System.currentTimeMillis(), red.policy.gold[0], red.policy.unit_thresholds[0], red.policy.gold[1], 
-            		red.policy.unit_thresholds[1], red.policy.gold[2], red.policy.unit_thresholds[2], red.policy.max_idle_units,
-            		blue.policy.gold[0], blue.policy.unit_thresholds[0], blue.policy.gold[1], blue.policy.unit_thresholds[1], 
-            		blue.policy.gold[2], blue.policy.unit_thresholds[2], blue.policy.max_idle_units, ticks);
-            stats.append_to_file(Statistics.WIN_FILE, data);
+        }
+        
+
+        if (ticks % 300 == 0){
+            red.trigger_sendout = true;
+            blue.trigger_sendout = true;
         }
 
         
-        if (ticks % 20 == 0)
-            StatsSummary();
+//        if (ticks % 20 == 0)
+//            StatsSummary();
         
         ticks++;
+        
+//        if (ticks % 20 == 0 && ticks > 5000){
+//            System.out.println("red force:" + red.force.size() + ", blue force:" + blue.force.size());
+//            System.out.println("red struc:" + red.structures.size() + ", blue struc:" + blue.structures.size());
+//           
+//        }
         
         if (ticks >= 2000){
             return false;
@@ -196,6 +198,12 @@ public class Sim_Main{
         while (true){
             
             if (winner != null){
+                String data = String.format("%d,%d,%d,%d,%.2f,%d,%.2f,%d,%.2f,%d,%d,%.2f,%d,%.2f,%d,%.2f,%d\n", simul_count, ticks,
+            		System.currentTimeMillis(), red.policy.gold[0], red.policy.unit_thresholds[0], red.policy.gold[1], 
+            		red.policy.unit_thresholds[1], red.policy.gold[2], red.policy.unit_thresholds[2], red.policy.max_idle_units,
+            		blue.policy.gold[0], blue.policy.unit_thresholds[0], blue.policy.gold[1], blue.policy.unit_thresholds[1], 
+            		blue.policy.gold[2], blue.policy.unit_thresholds[2], blue.policy.max_idle_units);
+                stats.append_to_file(winner == red ? Statistics.WIN_FILE: Statistics.LOSS_FILE, data);
                 break;
             }
             gold_disbursal();
@@ -204,11 +212,11 @@ public class Sim_Main{
 
 
             if (!update_state()){
-                return false;
+                return true;
             }
             
         }
-        return true;
+        return false;
         
         
 
@@ -224,7 +232,7 @@ public class Sim_Main{
         long start_time, end_time;
         
         init_simulation();
-        Random r = new Random();
+        Random r = new Random(10);
         policies = Policy.generate_configurations();
         stchs = StochasticInput.generate_configurations();
         
@@ -240,27 +248,31 @@ public class Sim_Main{
         System.out.println("About to perform " + policies.length * stchs.length + " simulations.");
         for (i = 0; i < policies.length; i++){
             count_draws = 0;
+            System.out.println("============ Policy #" + i);
             while ((j = r.nextInt(policies.length)) == i);
-            for (k = 0; k < stchs.length; k++){
-                if (simul_count != 4609){
-                    simul_count++;
-                    continue;
-                }
-                start_time = System.currentTimeMillis();
-                draw = run_simulation(policies[i],policies[j],stchs[k]);
-                end_time = System.currentTimeMillis();
-                System.out.println("Simulation: " + simul_count + (winner == red ? "\tRed Won.": "\tBlue Won.") + 
-                        "\tTicks: " + ticks + "\tElapsed time: " + ((end_time - start_time) / 1000.0));
-                System.out.println("Red policy: " + policies[i] + "\tBlue policy: " + policies[j] + "\t Stochastic Input: " + stchs[k]);
-                simul_count++;
-                
-                if (draw){
-                    count_draws++;
-                }
-                if (count_draws > 5){
-                    break;
-                }
+            
+            
+            //iterate from front and back
+            for (int pair: new int[]{i,policies.length - i - 1}){
+                for (k = 0; k < stchs.length; k++){
 
+                    start_time = System.currentTimeMillis();
+
+                    //returns false if successful, true if draw
+                    draw = run_simulation(policies[pair],policies[j],stchs[k]);
+                    end_time = System.currentTimeMillis();
+                    System.out.println("Simulation: " + simul_count + (winner == red ? "\tRed Won.": "\tBlue Won.") + 
+                            "\tTicks: " + ticks + "\tElapsed time: " + ((end_time - start_time) / 1000.0));
+                    //System.out.println("Red policy: " + policies[i] + "\tBlue policy: " + policies[j] + "\t Stochastic Input: " + stchs[k]);
+                    simul_count++;
+                    if (draw){
+                        count_draws++;
+                    }
+                    if (count_draws > 2){
+                        count_draws = 0;
+                        break;
+                    }
+                }
             }
             
         }
