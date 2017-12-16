@@ -151,6 +151,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
         Sim_Main.init_simulation();
+        Sim_Main.start_simulation(new Policy(), new Policy(), Sim_Main.stch);
         Scene scene = initialize_gui();
         
         primaryStage.setTitle("RTS Simulation");

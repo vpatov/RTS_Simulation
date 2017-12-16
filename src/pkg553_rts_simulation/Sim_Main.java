@@ -123,9 +123,9 @@ public class Sim_Main{
         StatsSummary();
     }
     
-    public static void init_players(){
-        red = new Player(true, Map.red_structures); //red on top
-        blue = new Player(false, Map.blue_structures); // blue on bottom
+    public static void init_players(Policy red_policy, Policy blue_policy){
+        red = new Player(true, Map.red_structures, red_policy); //red on top
+        blue = new Player(false, Map.blue_structures, blue_policy); // blue on bottom
         
         red.enemy = blue;
         red.enemy_force = blue.force;
@@ -147,6 +147,9 @@ public class Sim_Main{
         Map.init_starting_points(blue);
     }
     
+    
+    
+    
     public static void init_simulation(){
         ticks = 0;
         ticks_until_next_arrival = 0;
@@ -156,16 +159,15 @@ public class Sim_Main{
         Map.load_structures();
 
        
-        init_players();
         
-//        red.policy.max_idle_units = 18;
-//        blue.policy.max_idle_units = 0;
-//        red.policy.unit_thresholds[2] = 20;
-//        red.policy.unit_thresholds[0] = 0;
-//        red.policy.unit_thresholds[1] = 0;
-//        red.policy.gold[2] = Unit_Type.unit_types.get(Unit_Type.TYPE.TYPE_3).gold_cost;
+
         
         
+    }
+    
+    public static void start_simulation(Policy red_policy, Policy blue_policy,StochasticInput stch){
+                init_players(red_policy,blue_policy);
+
     }
     
 
@@ -174,8 +176,10 @@ public class Sim_Main{
     public static void main(String []args){
         
         
-        init_simulation();
         
+        
+        init_simulation();
+        start_simulation(new Policy(), new Policy(), stch);
         long start_time = System.currentTimeMillis();
         
         while (true){
