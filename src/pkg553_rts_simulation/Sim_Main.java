@@ -213,7 +213,13 @@ public class Sim_Main{
         policies = Policy.generate_configurations();
         stchs = StochasticInput.generate_configurations();
         
+        for (Policy plc: policies){
+            System.out.println(plc);
+        }
         
+        for (StochasticInput st: stchs){
+            System.out.println(st);
+        }
         
         for (i = 0; i < policies.length; i++){
             while ((j = r.nextInt(policies.length)) != i);
@@ -234,6 +240,10 @@ public class Sim_Main{
     public static void main(String[]args){
         run_many();
     }
+    
+    
+    
+
     
     public static void StatsSummary() {
     	

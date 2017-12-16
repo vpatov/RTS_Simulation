@@ -58,11 +58,11 @@ public class Policy {
         */
         lg1 = 5;   lg2 = 5;    lg3 = 5; 
         lt1 = 3;   lt2 = 3;    lt3 = 3;
-        lidle = 10;
+        lidle = 5;
         
         bg1 = 30;   bg2 = 20;   bg3 = 1;
         bt1 = 5;    bt2 = 5;    bt3 = 5;
-        bidle = 2;
+        bidle = 4;
 
         policies = new Policy[lg1 * lg2 * lg3 * lt1 * lt2 * lt3 * lidle];
         
@@ -91,6 +91,13 @@ public class Policy {
         }
         
         return policies;
+    }
+    
+    @Override
+    public String toString(){
+        return        gold[0] + "," + gold[1] + "," + gold[2] + 
+                "," + unit_thresholds[0] + "," + unit_thresholds[1] + "," + unit_thresholds[2] + 
+                "," + max_idle_units;
     }
 
     
