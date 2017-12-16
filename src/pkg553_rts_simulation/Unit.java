@@ -194,11 +194,11 @@ public class Unit extends Sim_Obj implements Cloneable{
                             Structure enemy_structure = (Structure)enemy_target;
                             enemy_structures.remove(enemy_structure);
                             enemy_dead_structures.add(enemy_structure);
-                            for (int x = enemy_structure.top_left.x; x <= enemy_structure.bottom_right.x; x++){
-                                for (int y = enemy_structure.top_left.y; y <= enemy_structure.bottom_right.y; y++){
-                                    Map.global_map[x][y] = Map.Terrain.GRASS;
-                                }
-                            }
+//                            for (int x = enemy_structure.top_left.x; x <= enemy_structure.bottom_right.x; x++){
+//                                for (int y = enemy_structure.top_left.y; y <= enemy_structure.bottom_right.y; y++){
+//                                    Map.global_map[x][y] = Map.Terrain.GRASS;
+//                                }
+//                            }
                         }
                             
                         enemy_target = null;
