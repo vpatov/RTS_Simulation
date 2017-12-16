@@ -158,7 +158,7 @@ public class Sim_Main{
         Unit_Type.init_unit_types("params/unit_types.txt");
         Map.load_structures();
 
-       
+        Map.precalculatePaths();
         
 
         
