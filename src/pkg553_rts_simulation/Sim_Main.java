@@ -98,13 +98,29 @@ public class Sim_Main{
         if (red.structures.isEmpty()){
             System.out.println("Blue won");
             winner = blue;
+            
+            String data = String.format("%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d\n", stats.runId, 
+            		System.currentTimeMillis(), red.policy.gold[0], red.policy.unit_thresholds[0], red.policy.gold[1], 
+            		red.policy.unit_thresholds[1], red.policy.gold[2], red.policy.unit_thresholds[2], red.policy.max_idle_units,
+            		blue.policy.gold[0], blue.policy.unit_thresholds[0], blue.policy.gold[1], blue.policy.unit_thresholds[1], 
+            		blue.policy.gold[2], blue.policy.unit_thresholds[2], blue.policy.max_idle_units, ticks +1);
+            stats.appendToFile(Statistics.LOSS_FILE, data);
         }
         if (blue.structures.isEmpty()){
             System.out.println("Red won");
             winner = red;
+            
+            String data = String.format("%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d\n", stats.runId, 
+            		System.currentTimeMillis(), red.policy.gold[0], red.policy.unit_thresholds[0], red.policy.gold[1], 
+            		red.policy.unit_thresholds[1], red.policy.gold[2], red.policy.unit_thresholds[2], red.policy.max_idle_units,
+            		blue.policy.gold[0], blue.policy.unit_thresholds[0], blue.policy.gold[1], blue.policy.unit_thresholds[1], 
+            		blue.policy.gold[2], blue.policy.unit_thresholds[2], blue.policy.max_idle_units, ticks +1);
+            stats.appendToFile(Statistics.WIN_FILE, data);
         }
 
         ticks++;
+        
+        StatsSummary();
     }
     
     public static void init_players(){
@@ -187,8 +203,8 @@ public class Sim_Main{
         int unitsLostBlue = stats.unitsBuiltBlue - blue.force.size();
         int unitsLostRed = stats.unitsBuiltRed - red.force.size();
 
-//		for (Structure b : current_state.blue_structures) { buildingHealthBlue += b.health; }
-//		for (Structure r : current_state.red_structures) 	{ buildingHealthRed += r.health; }
+		for (Structure b : blue.structures) { buildingHealthBlue += b.health; }
+		for (Structure r : red.structures) 	{ buildingHealthRed += r.health; }
         for (Unit b : blue.force) { 
                 if (b.location.y > b.location.x) enemyTerritoryUnitsBlue++; 
         }
@@ -205,6 +221,6 @@ public class Sim_Main{
                         stats.totalGold, stats.totalGold - red.gold, stats.unitsBuiltRed, unitsLostRed, 
                         red.structures.size(), buildingHealthRed, stats.damageDealtRed, enemyTerritoryUnitsRed);
 //		return summary + "\n" + summaryBlue + "\n" + summaryRed;
-        stats.appendToStatsFile(summaryBlue + "," + summaryRed + "\n");
+        stats.appendToFile(stats.statsFile, summaryBlue + "," + summaryRed + "\n");
 	}
 }
