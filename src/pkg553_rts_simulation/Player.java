@@ -48,11 +48,21 @@ public class Player {
     int gold;
     boolean red;
     Policy policy;
-    ArrayList<Point> starting_unit_points;
+    
+    Point corner;
+    ArrayList<Structure> structures;
+    ArrayList<Structure> dead_structures;
+    ArrayList<Unit> force;
+    
+    Player enemy;
+    ArrayList<Structure> enemy_structures;
+    ArrayList<Structure> enemy_dead_structures;
+    ArrayList<Unit> enemy_force;
+    
+    Point[] starting_unit_points;
     
     class Policy {
 
-        
         int gold[];
         int unit_thresholds[];
         int max_idle_units;
@@ -69,10 +79,17 @@ public class Player {
         }
     }
     
-    public Player(boolean _red){
-        gold = 0;
-        policy = new Policy();
-        red = _red;
+    public Player(boolean red, ArrayList<Structure> structures){
+        this.gold = 0;
+        this.policy = new Policy();
+        this.red = red;
+        this.structures = structures;
+        corner = red ? Map.red_corner : Map.blue_corner;
+
+        dead_structures = new ArrayList<>();
+        force = new ArrayList<>();
+        
+        
     }
     
     

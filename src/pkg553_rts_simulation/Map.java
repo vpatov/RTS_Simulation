@@ -44,9 +44,10 @@ public class Map {
     static Sim_Obj[][] unit_map;    //Singleton
     static Point[] red_starting_points;
     static Point[] blue_starting_points; 
-    static Point blue_base = new Point(182,21);
-    static Point red_base = new Point(21,182);
-    static int structure_size = 8;
+    static Point blue_corner = new Point(200,0);
+    static Point red_corner = new Point(0,200);
+    static int structure_size = 8;              //hardcoded :(
+    static int spawn_size = 35;
     static ArrayList<Structure> all_structures;
     static ArrayList<Structure> blue_structures;
     static ArrayList<Structure> red_structures;
@@ -140,8 +141,7 @@ public class Map {
                     
                     Structure struct = new Structure(
                             new Point(x,y),new Point(x, y+ structure_size-1),
-                            new Point(x + structure_size-1,y),new Point(x+ structure_size-1, y + structure_size-1),
-                            terrain == Terrain.RED_STRUCTURE ? Sim_Main.red : Sim_Main.blue
+                            new Point(x + structure_size-1,y),new Point(x+ structure_size-1, y + structure_size-1)
                     );
                     all_structures.add(struct);
                     (terrain == Terrain.RED_STRUCTURE ? red_structures : blue_structures).add(struct);
@@ -159,7 +159,45 @@ public class Map {
     }
     
         
-   
+   public static void init_starting_points(Player player){
+       //find corner that is closest to your corner.
+       //generate all points in that corner that aren't on a building, on terrain,
+       //and are at least two cells away from a building.
+       
+        ArrayList<Point> list_points = new ArrayList<>();
+        Point[] ret_points;
+        for (int x = 0; x < MAP_HEIGHT; x++){
+            for (int y = 0; y < MAP_WIDTH; y++){
+                if (Point.distance(player.corner, x,y) < spawn_size ){
+
+                    boolean valid = true;
+                    for (int _x = x-2; _x < x+2 && valid; _x++){
+                        for (int _y = y-2; _y < y + 2 && valid; _y++){
+                            if (Point.distance(x,y,_x,_y) > 2)
+                                continue;
+                            try {
+                                if (global_map[_x][_y] != Terrain.GRASS)
+                                    valid = false;
+
+                            }
+                            catch (Exception e){
+                                valid = false;
+                            }
+                        }
+                    }
+
+                    if (valid)
+                        list_points.add(new Point(x,y));
+
+                }
+            }
+        }
+       
+        ret_points = new Point[list_points.size()];
+        ret_points = list_points.toArray(ret_points);
+        player.starting_unit_points = ret_points;
+
+   }
 
     
     

@@ -76,10 +76,9 @@ public class Rendering {
     public int[] getUpdatedDisplay() {
         initBuffer();
     	int[] map = buffer;
-    	Sim_State state = Sim_Main.state_buffer[Sim_Main.ticks  % Sim_Main.STATE_BUFFER_SIZE];
     	
     	//Blue Team
-    	for(Structure blue : state.blue_structures) {
+    	for(Structure blue : Sim_Main.blue.structures) {
     		for(int row = blue.top_left.x * _cellSize; row < (blue.bottom_left.x + 1) * _cellSize; row++) {
     			for(int col = blue.top_left.y * _cellSize; col < (blue.top_right.y + 1) * _cellSize; col++) {
     				map[col + (row * _width)] = BLUE_STRUCT_ALIVE;
@@ -88,14 +87,14 @@ public class Rendering {
     	}
         
         
-        for(Structure blue : state.blue_dead_structures) {
+        for(Structure blue : Sim_Main.blue.dead_structures) {
     		for(int row = blue.top_left.x * _cellSize; row < (blue.bottom_left.x + 1) * _cellSize; row++) {
     			for(int col = blue.top_left.y * _cellSize; col < (blue.top_right.y + 1) * _cellSize; col++) {
     				map[col + (row * _width)] = BLUE_STRUCT_DEAD;
     			}
     		}
     	}
-    	for(Unit blue : state.blue_force) {
+    	for(Unit blue : Sim_Main.blue.force) {
     		int color;
                 
                 switch(blue.unit_type.type_enum){
@@ -114,21 +113,21 @@ public class Rendering {
     	}
     	
     	//Red Team
-    	for(Structure red : state.red_structures) {
+    	for(Structure red : Sim_Main.red.structures) {
     		for(int row = red.top_left.x * _cellSize; row <= (red.bottom_left.x + 1) * _cellSize; row++) {
     			for(int col = red.top_left.y * _cellSize; col <= (red.top_right.y + 1) * _cellSize; col++) {
     				map[col + (row * _width)] = RED_STRUCT_ALIVE;
     			}
     		}
     	}
-        for(Structure blue : state.red_dead_structures) {
+        for(Structure blue : Sim_Main.red.dead_structures) {
     		for(int row = blue.top_left.x * _cellSize; row < (blue.bottom_left.x + 1) * _cellSize; row++) {
     			for(int col = blue.top_left.y * _cellSize; col < (blue.top_right.y + 1) * _cellSize; col++) {
     				map[col + (row * _width)] = RED_STRUCT_DEAD;
     			}
     		}
     	}
-    	for(Unit red : state.red_force) {
+    	for(Unit red : Sim_Main.red.force) {
     		int color;
                 
                 switch(red.unit_type.type_enum){
@@ -158,7 +157,7 @@ public class Rendering {
         
         
         
-        for (Structure struct: state.red_structures){
+        for (Structure struct: Sim_Main.red.structures){
             for (Point p: new Point[]{struct.top_left, struct.top_right, struct.bottom_left, struct.bottom_right, struct.location}){
 //                System.out.println("Render red_structures");
 //                System.out.println(struct.top_left + "," + struct.top_right + "," + struct.bottom_left + "," + struct.bottom_right + "," + struct.location);
@@ -171,7 +170,7 @@ public class Rendering {
         }
         
 
-        for (Structure struct: state.blue_structures){
+        for (Structure struct: Sim_Main.blue.structures){
             for (Point p: new Point[]{struct.top_left, struct.top_right, struct.bottom_left, struct.bottom_right, struct.location}){
 //                System.out.println("Render blue_structures");
 //                System.out.println(struct.top_left + "," + struct.top_right + "," + struct.bottom_left + "," + struct.bottom_right + "," + struct.location);

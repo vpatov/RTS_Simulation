@@ -53,9 +53,16 @@ final public class Point{
     public int hashCode(){
         return Objects.hash(x,y);
     }
+    public static double distance(int x1, int y1, int x2, int y2){
+        return Math.sqrt(Math.pow(x1 - x2,2) + Math.pow(y1 - y2,2));
+    }
     
     public static double distance(Point a, Point b){
         return Math.sqrt(Math.pow(a.x - b.x,2) + Math.pow(a.y - b.y,2));
+    }
+    
+    public static double distance(Point a, int x, int y){
+        return Math.sqrt(Math.pow(a.x - x,2) + Math.pow(a.y - y,2));
     }
     
     public static int manhattan_distance(Point a, Point b){
@@ -100,7 +107,7 @@ final public class Point{
          return false;
      }
     
-    public static Point find_empty_point(Point point, Sim_State state){
+    public static Point find_empty_point(Point point){
         HashSet<Point> visited = new HashSet<>();
         LinkedList<Point> to_visit = new LinkedList<>();
         boolean in_top_half = Point.in_top_half(point);
@@ -111,7 +118,7 @@ final public class Point{
             point = to_visit.pop();
             visited.add(point);
             
-            if (!check_if_units_here(point,state.blue_force) && !check_if_units_here(point,state.red_force) && check_if_passable(point)){
+            if (!check_if_units_here(point,Sim_Main.blue.force) && !check_if_units_here(point,Sim_Main.red.force) && check_if_passable(point)){
                 return point;
             }
             else {
