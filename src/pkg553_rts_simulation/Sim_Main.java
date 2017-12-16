@@ -167,7 +167,7 @@ public class Sim_Main{
         red_starting_points = Map.init_starting_points(true);
         blue_starting_points = Map.init_starting_points(false);
 
-       
+        Map.precalculatePaths();
         
 
         

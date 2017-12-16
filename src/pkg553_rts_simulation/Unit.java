@@ -251,7 +251,8 @@ public class Unit extends Sim_Obj implements Cloneable{
         if (player.enemy_structures.isEmpty())
             return;
         structure_target_index = (structure_target_index + 1) % player.enemy_structures.size();
-        path = find_path_to_point(player.enemy_structures.get(structure_target_index).location);
+        Point target = player.enemy_structures.get(structure_target_index).location;
+        path = Map.paths[location.x][location.y].get(target.x + "," + target.y);
         unit_state = Unit_State.MOVING;
     }
     
