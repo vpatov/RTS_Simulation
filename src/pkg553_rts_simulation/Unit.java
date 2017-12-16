@@ -20,6 +20,7 @@ package pkg553_rts_simulation;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.PriorityQueue;
@@ -142,6 +143,7 @@ public class Unit extends Sim_Obj implements Cloneable{
 
                 if (path == null){
                     send_out();
+                    break;
                 }
 
                 if (!path.isEmpty()){
@@ -252,8 +254,27 @@ public class Unit extends Sim_Obj implements Cloneable{
             return;
         structure_target_index = (structure_target_index + 1) % player.enemy_structures.size();
         Point target = player.enemy_structures.get(structure_target_index).location;
-        path = Map.paths[location.x][location.y].get(target.x + "," + target.y);
+        path = find_cached_path_to_point(target);
         unit_state = Unit_State.MOVING;
+    }
+    
+    public LinkedList<Point> find_cached_path_to_point(Point dest){
+        HashMap<Point, LinkedList<Point>> cur = Map.paths[location.x][location.y];
+        LinkedList<Point> new_path;
+        if (cur != null){
+            new_path = Map.paths[location.x][location.y].get(dest);
+            if (new_path == null){
+                new_path = find_path_to_point(dest);
+                Map.paths[location.x][location.y].put(dest,new_path);
+            }
+            return new_path;
+        }
+        else {
+            new_path = find_path_to_point(dest);
+            Map.paths[location.x][location.y] = new HashMap<>();
+            Map.paths[location.x][location.y].put(dest,new_path);
+            return new_path;
+        }
     }
     
     
