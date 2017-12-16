@@ -212,7 +212,20 @@ public class Sim_Main{
 
 
             if (!update_state()){
+                String data = String.format("%d,%d,%d,%d,%.2f,%d,%.2f,%d,%.2f,%d,%d,%.2f,%d,%.2f,%d,%.2f,%d\n", simul_count, ticks,
+            		System.currentTimeMillis(), red.policy.gold[0], red.policy.unit_thresholds[0], red.policy.gold[1], 
+            		red.policy.unit_thresholds[1], red.policy.gold[2], red.policy.unit_thresholds[2], red.policy.max_idle_units,
+            		blue.policy.gold[0], blue.policy.unit_thresholds[0], blue.policy.gold[1], blue.policy.unit_thresholds[1], 
+            		blue.policy.gold[2], blue.policy.unit_thresholds[2], blue.policy.max_idle_units);
+                stats.append_to_file(winner == red ? Statistics.WIN_FILE: Statistics.LOSS_FILE, data);
+                
+                
+                
                 return true;
+            }
+            
+            if (ticks % 20 == 0){
+                StatsSummary();
             }
             
         }
@@ -253,16 +266,18 @@ public class Sim_Main{
             
             
             //iterate from front and back
-            for (int pair: new int[]{i,policies.length - i - 1}){
+//            for (int pair: new int[]{i,policies.length - i - 1}){
                 for (k = 0; k < stchs.length; k++){
 
                     start_time = System.currentTimeMillis();
 
                     //returns false if successful, true if draw
-                    draw = run_simulation(policies[pair],policies[j],stchs[k]);
+                    draw = run_simulation(policies[i],policies[j],stchs[k]);
                     end_time = System.currentTimeMillis();
-                    System.out.println("Simulation: " + simul_count + (winner == red ? "\tRed Won.": "\tBlue Won.") + 
-                            "\tTicks: " + ticks + "\tElapsed time: " + ((end_time - start_time) / 1000.0));
+                    if (simul_count % 20 == 0){
+                        System.out.println("Simulation: " + simul_count + (winner == red ? "\tRed Won.": "\tBlue Won.") + 
+                                "\tTicks: " + ticks + "\tElapsed time: " + ((end_time - start_time) / 1000.0));
+                    }
                     //System.out.println("Red policy: " + policies[i] + "\tBlue policy: " + policies[j] + "\t Stochastic Input: " + stchs[k]);
                     simul_count++;
                     if (draw){
@@ -273,7 +288,7 @@ public class Sim_Main{
                         break;
                     }
                 }
-            }
+//            }
             
         }
         
@@ -286,6 +301,7 @@ public class Sim_Main{
     
     
 
+    
     
     public static void StatsSummary() {
     	
