@@ -19,19 +19,24 @@
 package pkg553_rts_simulation;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class Sim_Main{
     static Map map;
     static int MAP_WIDTH = 200;
     static int MAP_HEIGHT = 200;
 
+    static Point[] red_starting_points;
+    static Point[] blue_starting_points;
+    static Policy[] policies;
+    static StochasticInput[] stchs;
     
     static int ticks = 0;
     static int ticks_until_next_arrival = 0;
     static Player red, blue;
     static Statistics stats = new Statistics();
     static Player winner = null;
-    static StochasticInput stch = new StochasticInput();
+    static StochasticInput stch;
     
     static public void gold_disbursal(){
         int gold;
@@ -127,6 +132,9 @@ public class Sim_Main{
         red = new Player(true, Map.red_structures, red_policy); //red on top
         blue = new Player(false, Map.blue_structures, blue_policy); // blue on bottom
         
+        red.structures = Map.hardcode_red_structs();
+        blue.structures = Map.hardcode_blue_structs();
+        
         red.enemy = blue;
         red.enemy_force = blue.force;
         red.enemy_structures = blue.structures;
@@ -143,8 +151,7 @@ public class Sim_Main{
             struct.player = blue;
         
         
-        Map.init_starting_points(red);
-        Map.init_starting_points(blue);
+        
     }
     
     
@@ -157,6 +164,9 @@ public class Sim_Main{
         Map.load_terrain("maps/map_01_mirrored.bmp");
         Unit_Type.init_unit_types("params/unit_types.txt");
         Map.load_structures();
+        
+        red_starting_points = Map.init_starting_points(true);
+        blue_starting_points = Map.init_starting_points(false);
 
        
         
@@ -165,22 +175,12 @@ public class Sim_Main{
         
     }
     
-    public static void start_simulation(Policy red_policy, Policy blue_policy,StochasticInput stch){
-                init_players(red_policy,blue_policy);
-
-    }
-    
-
-    
- 
-    public static void main(String []args){
-        
-        
-        
-        
-        init_simulation();
-        start_simulation(new Policy(), new Policy(), stch);
-        long start_time = System.currentTimeMillis();
+    public static void run_simulation(Policy red_policy, Policy blue_policy,StochasticInput cur_stch){
+        winner = null;
+        stch = cur_stch;
+        ticks = 0;
+        ticks_until_next_arrival = 0;
+        init_players(red_policy,blue_policy);
         
         while (true){
             
@@ -195,8 +195,42 @@ public class Sim_Main{
             update_state();
             
         }
-        long end_time = System.currentTimeMillis();
-        System.out.println("Ticks: " + ticks + "\tElapsed time: " + ((end_time - start_time) / 1000.0));
+        
+        
+
+    }
+    
+
+       
+    
+ 
+    public static void run_many(){
+        
+        int i,j,k;
+        long start_time, end_time;
+        
+        init_simulation();
+        Random r = new Random();
+        policies = Policy.generate_configurations();
+        stchs = StochasticInput.generate_configurations();
+        
+        
+        
+        for (i = 0; i < policies.length; i++){
+            while ((j = r.nextInt(policies.length)) != i);
+            for (k = 0; k < stchs.length; k++){
+                start_time = System.currentTimeMillis();
+                run_simulation(policies[i],policies[j],stchs[k]);
+                end_time = System.currentTimeMillis();
+                System.out.println("Ticks: " + ticks + "\tElapsed time: " + ((end_time - start_time) / 1000.0));
+            }
+            
+        }
+        
+    }
+    
+    public static void main(String[]args){
+        run_many();
     }
     
     public static void StatsSummary() {
