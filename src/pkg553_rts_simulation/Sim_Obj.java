@@ -34,25 +34,25 @@ public class Sim_Obj {
 //        }
 //    }
     
-    private enum Type{
+    protected enum Type{
         UNIT,STRUCTURE;
     }
     
-    int x,y;
+
     Type type;
 
-//    Point coordinates;
-    
-    public Sim_Obj(int x, int y){
-        this.x = x;
-        this.y = y;
-    }
+    int health;
+    Point location;
 //    
 //    public Sim_Obj(Point _p){
 //        location = new Point(_p.x,_p.y);
 //    }
     
     public Sim_Obj(){}
+    
+    public double distance(Sim_Obj obj){
+        return Point.distance(obj.location,location);
+    }
     
 
     

@@ -29,6 +29,7 @@ import javafx.scene.control.Slider;
 import java.nio.IntBuffer;
 import java.util.Timer;
 import java.util.TimerTask;
+import javafx.scene.input.MouseEvent;
 
 import static pkg553_rts_simulation.Sim_Main.gold_disbursal;
 import static pkg553_rts_simulation.Sim_Main.policy_enactment;
@@ -80,6 +81,11 @@ public class Main extends Application {
         root.getChildren().add(control_pane);
         root.getChildren().add(canvas);
         
+        root.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                System.out.println("Mouse click: " + (int)((event.getSceneY() - 50) / 3) + "," + (int)((event.getSceneX()) / 3));
+        }});
         
         Scene scene = new Scene(root, SCREEN_WIDTH, SCREEN_HEIGHT);
         return scene;
@@ -131,10 +137,7 @@ public class Main extends Application {
             @Override
             public void run() {
   
-                gold_disbursal();
-                System.out.println("Ticks: " + Sim_Main.ticks);
-                policy_enactment(Sim_Main.red);
-                policy_enactment(Sim_Main.blue);
+                
                 Sim_Main.update_state();
                
 //                if (Sim_Main.ticks % 50 == 0) System.out.println(Sim_Main.StatsSummary());
@@ -145,11 +148,21 @@ public class Main extends Application {
 
                 PixelWriter p = gc.getPixelWriter();
                 p.setPixels(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT, pixelFormat, buffer, 0, CANVAS_WIDTH);
+                
+                
+                if (Sim_Main.winner != null){
+                    timer.cancel();
+                    return;
+                }
             }
         }, 0, 100);
     }
     
 
+    public void init_mouse_debug(){
+
+    }
+    
     
     /**
      * @param args the command line arguments

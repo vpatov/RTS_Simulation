@@ -64,35 +64,29 @@ public class Unit extends Sim_Obj implements Cloneable{
     
     Unit_Type unit_type;
     Player player;
-    int health;
     Unit_State unit_state;
     LinkedList<Point> path;
     Point movement_target;
-    Unit enemy_target;
-    Point location;
+    Sim_Obj enemy_target;
 
     
     
     //constructors
 
-    public Unit(){
-        
-    }
+
     
-    public Unit(Unit_Type _unit_type){
-        unit_type = _unit_type;
-        unit_state = Unit_State.IDLE;
-    }
+
     
     public Unit(Unit_Type.TYPE type){
         unit_type = Unit_Type.unit_types.get(type);
         unit_state = Unit_State.IDLE;
+        this.type = Sim_Obj.Type.UNIT;
     }
     
-    public double distance(Unit unit){
-        return Point.distance(unit.location,location);
+    @Override
+    public String toString(){
+        return (player.red?  "Red":"Blue") + " unit at " + this.location;
     }
-    
     
     public static ArrayList<Unit> create_units(Unit_Type.TYPE type,Player _player, Sim_State state){
         ArrayList<Unit> new_units = new ArrayList<>();
@@ -128,6 +122,8 @@ public class Unit extends Sim_Obj implements Cloneable{
     //is it returning a copy of a new unit?
     public void update_state(Sim_State sim_state){  
         ArrayList<Unit> enemies = player.red ? sim_state.blue_force : sim_state.red_force;
+        ArrayList<Structure> enemy_structures = player.red ? sim_state.blue_structures : sim_state.red_structures;
+        ArrayList<Structure> enemy_dead_structures = player.red ? sim_state.blue_dead_structures : sim_state.red_dead_structures;
         switch (this.unit_state){
             
             //if its moving, but it discovers an enemy nearby, it should switch to attacking.
@@ -144,6 +140,13 @@ public class Unit extends Sim_Obj implements Cloneable{
                 else {
                     this.unit_state = Unit_State.IDLE;
                 }
+                
+                Structure struct = look_for_enemy_structures(sim_state);
+                if (struct != null){
+                    this.unit_state = Unit_State.ATTACKING;
+                    this.enemy_target = struct;
+                }
+                
 
                 Unit unit = look_for_enemies(sim_state);
                 if (unit != null){
@@ -156,17 +159,26 @@ public class Unit extends Sim_Obj implements Cloneable{
                 
                 
             case ATTACKING: {
-                if (distance(enemy_target) > 6){
+                int min_target_distance = enemy_target.type == Sim_Obj.Type.UNIT ? 6:8;
+                
+                if (distance(enemy_target) > min_target_distance){
                     this.unit_state = Unit_State.MOVING;
                     System.out.println("Enemy is out of range. Starting to move");
                 }
                 else {
                     enemy_target.health -= this.unit_type.damage_max;
-                    System.out.println("Just hit enemy at " + enemy_target.location + " for " + unit_type.damage_max);
+                    System.out.println(player.red?"Red":"Blue" + " unit at " + location + "just hit enemy " +(enemy_target.type == Sim_Obj.Type.UNIT ? "unit":"structure")+ " at " + enemy_target.location + " for " + unit_type.damage_max);
                     Statistics.updateDamage(!this.player.red, this.unit_type.damage_max);
                             
                     if (enemy_target.health <= 0){
-                        enemies.remove(enemy_target);
+                        if (enemy_target.type == Sim_Obj.Type.UNIT){
+                            enemies.remove(enemy_target);
+                        }
+                        else{
+                            enemy_structures.remove(enemy_target);
+                            enemy_dead_structures.add((Structure)enemy_target);
+                        }
+                            
                         enemy_target = null;
                         this.unit_state = Unit_State.MOVING;
                     }
@@ -188,11 +200,21 @@ public class Unit extends Sim_Obj implements Cloneable{
    
     }
     
-    public Unit look_for_enemies(Sim_State state){
-        ArrayList<Unit> enemies = player.red ? state.blue_force : state.red_force;
+    public Unit look_for_enemies(Sim_State sim_state){
+        ArrayList<Unit> enemies = player.red ? sim_state.blue_force : sim_state.red_force;
         for (Unit unit: enemies){
             if ((int)distance(unit) <= 6){
                 return unit;
+            }
+        }
+        return null;
+    }
+    
+    public Structure look_for_enemy_structures(Sim_State state){
+        ArrayList<Structure> enemy_structures = player.red ? state.blue_structures : state.red_structures;
+        for (Structure struct: enemy_structures){
+            if (struct.distance_to_center(location) <= 8){
+                return struct;
             }
         }
         return null;
@@ -271,7 +293,7 @@ public class Unit extends Sim_Obj implements Cloneable{
                     if (Point.check_if_passable(point)){
                         visited.add(p);
 //                        to_visit.add(new Node(p,node,(int)Point.distance(p, dest) + node.cost));
-                        to_visit.add(new Node(p, node, Math.abs(dest.x - p.x) + Math.abs(dest.y - p.y)));
+                        to_visit.add(new Node(p, node, Point.manhattan_distance(dest,p) + node.cost));
                     }
                 }
             }
