@@ -93,7 +93,7 @@ public class Unit extends Sim_Obj implements Cloneable{
     
     public static ArrayList<Unit> create_units(Unit_Type.TYPE type,Player _player){
         ArrayList<Unit> new_units = new ArrayList<>();
-        Point starting_points[] = _player.starting_unit_points;
+        Point starting_points[] = _player.red ? Sim_Main.red_starting_points : Sim_Main.blue_starting_points;
         Point point;
         int index;
         
@@ -248,6 +248,8 @@ public class Unit extends Sim_Obj implements Cloneable{
     
     /** @TODO generate starting points */
     public void send_out(){
+        if (player.enemy_structures.isEmpty())
+            return;
         structure_target_index = (structure_target_index + 1) % player.enemy_structures.size();
         Point target = player.enemy_structures.get(structure_target_index).location;
         path = Map.paths[location.x][location.y].get(target.x + "," + target.y);

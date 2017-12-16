@@ -145,8 +145,15 @@ public class Map {
                             new Point(x + structure_size-1,y),new Point(x+ structure_size-1, y + structure_size-1)
                     );
                     all_structures.add(struct);
-                    (terrain == Terrain.RED_STRUCTURE ? red_structures : blue_structures).add(struct);
-                    //System.out.println(struct);   
+                    if (terrain == Terrain.RED_STRUCTURE){
+                        red_structures.add(struct);
+                        struct.player = Sim_Main.red;
+                    }
+                    else {
+                        blue_structures.add(struct);
+                        struct.player = Sim_Main.blue;
+                    }
+                     
                 }
             }
         }
@@ -155,16 +162,17 @@ public class Map {
     }
     
         
-   public static void init_starting_points(Player player){
+   public static Point[] init_starting_points(boolean red){
        //find corner that is closest to your corner.
        //generate all points in that corner that aren't on a building, on terrain,
        //and are at least two cells away from a building.
        
+       Point corner = red ? Map.red_corner : Map.blue_corner;
         ArrayList<Point> list_points = new ArrayList<>();
         Point[] ret_points;
         for (int x = 0; x < MAP_HEIGHT; x++){
             for (int y = 0; y < MAP_WIDTH; y++){
-                if (Point.distance(player.corner, x,y) < spawn_size ){
+                if (Point.distance(corner, x,y) < spawn_size ){
 
                     boolean valid = true;
                     for (int _x = x-2; _x < x+2 && valid; _x++){
@@ -192,7 +200,7 @@ public class Map {
        
         ret_points = new Point[list_points.size()];
         ret_points = list_points.toArray(ret_points);
-        player.starting_unit_points = ret_points;
+        return ret_points;
 
    }
 
@@ -213,4 +221,37 @@ public class Map {
 			}
 		}
    	}
+   
+   static Point[] r1 = new Point[]{new Point(8,184), new Point(8,191), new Point(15,184), new Point(15,191)};
+   static Point[] r2 = new Point[]{new Point(19, 140), new Point(19, 147), new Point(26, 140), new Point(26, 147)};
+   static Point[] r3 = new Point[]{new Point(47, 152), new Point(47, 159), new Point(54, 152), new Point(54, 159)};
+   static Point[] r4 = new Point[]{new Point(50, 178), new Point(50, 185), new Point(57, 178), new Point(57, 185)};
+   
+   static Point[] b1 = new Point[]{new Point(184,8), new Point(191,8), new Point(184,15), new Point(191,15)};
+   static Point[] b2 = new Point[]{new Point(140,19), new Point(147,19), new Point(26,140), new Point(147,26)};
+   static Point[] b3 = new Point[]{new Point(152,47), new Point(159,47), new Point(152,54), new Point(159,54)};
+   static Point[] b4 = new Point[]{new Point(178,50), new Point(185,50), new Point(178,57), new Point(185,57)};
+   
+   public static ArrayList<Structure> hardcode_red_structs(){
+       ArrayList<Structure> ret = new ArrayList<>();
+       
+       ret.add(new Structure(r1[0],r1[1],r1[2],r1[3]));
+       ret.add(new Structure(r2[0],r2[1],r2[2],r2[3]));
+       ret.add(new Structure(r3[0],r3[1],r3[2],r3[3]));
+       ret.add(new Structure(r4[0],r4[1],r4[2],r4[3]));
+       return ret;
+       
+   }
+   
+    public static ArrayList<Structure> hardcode_blue_structs(){
+       ArrayList<Structure> ret = new ArrayList<>();
+       
+       ret.add(new Structure(b1[0],b1[1],b1[2],b1[3]));
+       ret.add(new Structure(b2[0],b2[1],b2[2],b2[3]));
+       ret.add(new Structure(b3[0],b3[1],b3[2],b3[3]));
+       ret.add(new Structure(b4[0],b4[1],b4[2],b4[3]));
+       return ret;
+       
+   }
+    
 }
