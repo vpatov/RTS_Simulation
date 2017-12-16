@@ -34,7 +34,7 @@ import javax.imageio.ImageIO;
  */
 public class Map {
     public enum Terrain {
-        CLIFF,GRASS,NON_TERRAIN,STRUCTURE;
+        CLIFF,GRASS,NON_TERRAIN,RED_STRUCTURE, BLUE_STRUCTURE;
     }
     
     
@@ -47,12 +47,15 @@ public class Map {
     static Point blue_base = new Point(182,21);
     static Point red_base = new Point(21,182);
     static int structure_size = 8;
-    static ArrayList<Structure> bottom_structures;
-    static ArrayList<Structure> top_structures;
+    static ArrayList<Structure> all_structures;
+    static ArrayList<Structure> blue_structures;
+    static ArrayList<Structure> red_structures;
     
-    static final int GRASS_COLOR = -14630848;
-    static final int UNPASSABLE_COLOR = -16777216;
-    static final int STRUCTURE_COLOR = -1;
+  
+    static final int GRASS_COLOR =          ((255 & 0xFF) << 24) | ((32 & 0xFF) << 16)  | ((192 & 0xFF) << 8)   | ((64 & 0xFF) << 0);
+    static final int UNPASSABLE_COLOR =     ((255 & 0xFF) << 24) | ((0 & 0xFF) << 16)   | ((0 & 0xFF) << 8)     | ((0 & 0xFF) << 0);
+    static final int RED_STRUCTURE_COLOR =  ((255 & 0xFF) << 24) | ((255 & 0xFF) << 16) | ((0 & 0xFF) << 8)     | ((0 & 0xFF) << 0);
+    static final int BLUE_STRUCTURE_COLOR = ((255 & 0xFF) << 24) | ((0 & 0xFF) << 16)   | ((0 & 0xFF) << 8)     | ((255 & 0xFF) << 0);
     
    
 
@@ -60,7 +63,7 @@ public class Map {
     public static Terrain[][] load_terrain(String filepath){
         BufferedImage img;
         Color color;
-        
+
         if (filepath == null){
             if (global_map != null)
                 return global_map;
@@ -71,29 +74,37 @@ public class Map {
         }
         
         try {
+            /*
+            IMPORTANT: global_map is stored as [rows][cols]
+            Visually points are represented (row,col) -> (x,y)
+            That is, x is the height, and y is the width.
+            */
+            
             img = ImageIO.read(new File(filepath));
             MAP_WIDTH = img.getWidth();
             MAP_HEIGHT = img.getHeight();
             global_map = new Terrain[MAP_WIDTH][MAP_HEIGHT];
             unit_map = new Sim_Obj[MAP_WIDTH][MAP_HEIGHT];
-            for (int i = 0; i < img.getWidth(); i++){
-                for (int j = 0; j < img.getHeight(); j++){
-                    switch(img.getRGB(i,j)){
+            for (int x = 0; x < img.getHeight(); x++){
+                for (int y = 0; y < img.getWidth(); y++){
+
+                    switch(img.getRGB(y, x)){
                         case GRASS_COLOR:
-                            global_map[i][j] = Terrain.GRASS; break;
+                            global_map[x][y] = Terrain.GRASS; break;
                         case UNPASSABLE_COLOR:
-                            global_map[i][j] = Terrain.CLIFF; break;
-                        case STRUCTURE_COLOR:
-                            global_map[i][j] = Terrain.STRUCTURE; break;
+                            global_map[x][y] = Terrain.CLIFF; break;
+                        case RED_STRUCTURE_COLOR:
+                            global_map[x][y] = Terrain.RED_STRUCTURE; break;
+                        case BLUE_STRUCTURE_COLOR:
+                            global_map[x][y] = Terrain.BLUE_STRUCTURE; break;
                         default:
-                            System.out.println("Unexpected color in map: " +  new Color(img.getRGB(i,j)));
+                            System.out.println("Unexpected color in map: " +  new Color(img.getRGB(y,x)) + "," + img.getRGB(y,x));
                     }
 
                 }
             }
 
-            
-            
+
             
             System.out.println("Loaded map successfully from " + filepath);
         }
@@ -105,72 +116,40 @@ public class Map {
     }
     
     public static void load_structures(){
-
-        bottom_structures = new ArrayList<>();
-        top_structures = new ArrayList<>();
-
-
-        //bottom_structures
-        for (int i = 0; i < MAP_WIDTH; i++){
-            for (int j = i + 1; j < MAP_HEIGHT; j++){
-                if (global_map[i][j] == Terrain.STRUCTURE){
-
+        all_structures = new ArrayList<>();
+        red_structures = new ArrayList<>();
+        blue_structures = new ArrayList<>();
+  
+        for (int x = 0; x < MAP_HEIGHT; x++){
+            for (int y = 0; y < MAP_WIDTH; y++){
+                Terrain terrain = global_map[x][y];
+                if (terrain == Terrain.RED_STRUCTURE || terrain == Terrain.BLUE_STRUCTURE){
                     boolean cont = false;
-                    for (Structure struct: bottom_structures){
+                    for (Structure struct: all_structures){
                         if (struct != null){
                             if (Point.point_is_inside(
-                                    new Point(i,j), struct.top_left, struct.bottom_right)
+                                    new Point(x,y), struct.top_left, struct.bottom_right)
                                     ){
-                                j += 8-1;
+                                y += 8-1;
                                 cont = true;
                             }
                         }
                     }
                     if (cont)
                         continue;
-
-                    Structure struct = new Structure();
-                    struct.top_left = new Point(i,j);
-                    struct.top_right = new Point(i + structure_size-1,j);
-                    struct.bottom_left = new Point(i, j+ structure_size-1);
-                    struct.bottom_right = new Point(i+ structure_size-1, j + structure_size-1);
-                    bottom_structures.add(struct);
+                    
+                    Structure struct = new Structure(
+                            new Point(x,y),new Point(x, y+ structure_size-1),
+                            new Point(x + structure_size-1,y),new Point(x+ structure_size-1, y + structure_size-1),
+                            terrain == Terrain.RED_STRUCTURE ? Sim_Main.red : Sim_Main.blue
+                    );
+                    all_structures.add(struct);
+                    (terrain == Terrain.RED_STRUCTURE ? red_structures : blue_structures).add(struct);
+                    System.out.println(struct);   
                 }
             }
-
         }
 
-
-        //top_structures
-        for (int j = 0; j < MAP_HEIGHT; j++){
-            for (int i = j + 1; i < MAP_HEIGHT; i++){
-                if (global_map[i][j] == Terrain.STRUCTURE){
-
-                    boolean cont = false;
-                    for (Structure struct: top_structures){
-                        if (struct != null){
-                            if (Point.point_is_inside(
-                                    new Point(i,j), struct.top_left, struct.bottom_right)
-                                    ){
-                                i += 8-1;
-                                cont = true;
-                            }
-                        }
-                    }
-                    if (cont)
-                        continue;
-
-                    Structure struct = new Structure();
-                    struct.top_left = new Point(i,j);
-                    struct.top_right = new Point(i + structure_size-1,j);
-                    struct.bottom_left = new Point(i, j+ structure_size-1);
-                    struct.bottom_right = new Point(i+ structure_size-1, j + structure_size-1);
-                    top_structures.add(struct);
-                }
-            }
-
-        }
-        
 
         // shamelessly hard-coded
         red_starting_points = new Point[]

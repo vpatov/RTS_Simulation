@@ -4,16 +4,23 @@ import javafx.scene.paint.Color;
 
 public class Rendering {
 	final static int BLACK 	= colorToInt(Color.BLACK);
+        final static int GREEN 	= colorToInt(Color.GREEN);
+        final static int WHITE 	= colorToInt(Color.WHITE);
+
 	final static int BLUE_1 = colorToInt(Color.rgb(135, 206, 235));
 	final static int BLUE_2 = colorToInt(Color.rgb(70, 130, 180));
 	final static int BLUE_3 = colorToInt(Color.rgb(0, 0, 255));
-	final static int BLUE_4 = colorToInt(Color.rgb(0, 0, 128));
-	final static int GREEN 	= colorToInt(Color.GREEN);
+	final static int BLUE_STRUCT_ALIVE = colorToInt(Color.rgb(0, 0, 128));
+        final static int BLUE_STRUCT_DEAD = colorToInt(Color.rgb(216, 242, 255));
+        final static int BLUE_STRUCT_CENTER = colorToInt(Color.rgb(71, 255, 245));
+        
 	final static int RED_1	= colorToInt(Color.rgb(205, 92, 92));
 	final static int RED_2	= colorToInt(Color.rgb(220, 20, 60));
 	final static int RED_3 	= colorToInt(Color.rgb(255, 0, 0));
-	final static int RED_4	= colorToInt(Color.rgb(139, 0, 0));
-	final static int WHITE 	= colorToInt(Color.WHITE);
+	final static int RED_STRUCT_ALIVE	= colorToInt(Color.rgb(139, 0, 0));
+        final static int RED_STRUCT_DEAD = colorToInt(Color.rgb(255, 242, 216));
+        final static int RED_STRUCT_CENTER = colorToInt(Color.rgb(255, 71, 230));
+	
 	
 	static int[] colors;
 	static int[] buffer;
@@ -37,8 +44,9 @@ public class Rendering {
             colors = new int[Map.Terrain.values().length];
             colors[Map.Terrain.CLIFF.ordinal()] 		= BLACK;
             colors[Map.Terrain.GRASS.ordinal()] 		= GREEN;
-            colors[Map.Terrain.STRUCTURE.ordinal()] 	= WHITE;
-            colors[Map.Terrain.NON_TERRAIN.ordinal()] 	= WHITE;
+            colors[Map.Terrain.RED_STRUCTURE.ordinal()]         = RED_STRUCT_DEAD;
+            colors[Map.Terrain.BLUE_STRUCTURE.ordinal()]        = BLUE_STRUCT_DEAD;
+            colors[Map.Terrain.NON_TERRAIN.ordinal()]           = BLACK;
     }
 	
 	private static int colorToInt(Color c) {
@@ -72,9 +80,18 @@ public class Rendering {
     	
     	//Blue Team
     	for(Structure blue : state.blue_structures) {
-    		for(int row = blue.top_left.y * _cellSize; row < (blue.bottom_left.y + 1) * _cellSize; row++) {
-    			for(int col = blue.top_left.x * _cellSize; col < (blue.top_right.x + 1) * _cellSize; col++) {
-    				map[col + (row * _width)] = BLUE_4;
+    		for(int row = blue.top_left.x * _cellSize; row < (blue.bottom_left.x + 1) * _cellSize; row++) {
+    			for(int col = blue.top_left.y * _cellSize; col < (blue.top_right.y + 1) * _cellSize; col++) {
+    				map[col + (row * _width)] = BLUE_STRUCT_ALIVE;
+    			}
+    		}
+    	}
+        
+        
+        for(Structure blue : state.blue_dead_structures) {
+    		for(int row = blue.top_left.x * _cellSize; row < (blue.bottom_left.x + 1) * _cellSize; row++) {
+    			for(int col = blue.top_left.y * _cellSize; col < (blue.top_right.y + 1) * _cellSize; col++) {
+    				map[col + (row * _width)] = BLUE_STRUCT_DEAD;
     			}
     		}
     	}
@@ -87,8 +104,7 @@ public class Rendering {
                     case TYPE_3: color = BLUE_3; break;     
                     default: color = BLUE_1;
                 }
-//    		if(blue.unit_type.type_enum == Unit_Type.TYPE.TYPE_1) color = BLUE_1;
-//    		else color = (blue.unit_type.type_enum == Unit_Type.TYPE.TYPE_2) ? BLUE_2 : BLUE_3;
+
     		
     		for(int row = blue.location.x * _cellSize; row < (blue.location.x + _unitSize) * _cellSize; row++) {
     			for(int col = blue.location.y * _cellSize; col < (blue.location.y + _unitSize) * _cellSize; col++) {
@@ -99,9 +115,16 @@ public class Rendering {
     	
     	//Red Team
     	for(Structure red : state.red_structures) {
-    		for(int row = red.top_left.y * _cellSize; row <= (red.bottom_left.y + 1) * _cellSize; row++) {
-    			for(int col = red.top_left.x * _cellSize; col <= (red.top_right.x + 1) * _cellSize; col++) {
-    				map[col + (row * _width)] = RED_4;
+    		for(int row = red.top_left.x * _cellSize; row <= (red.bottom_left.x + 1) * _cellSize; row++) {
+    			for(int col = red.top_left.y * _cellSize; col <= (red.top_right.y + 1) * _cellSize; col++) {
+    				map[col + (row * _width)] = RED_STRUCT_ALIVE;
+    			}
+    		}
+    	}
+        for(Structure blue : state.red_dead_structures) {
+    		for(int row = blue.top_left.x * _cellSize; row < (blue.bottom_left.x + 1) * _cellSize; row++) {
+    			for(int col = blue.top_left.y * _cellSize; col < (blue.top_right.y + 1) * _cellSize; col++) {
+    				map[col + (row * _width)] = RED_STRUCT_DEAD;
     			}
     		}
     	}
@@ -115,8 +138,7 @@ public class Rendering {
                     default: color = RED_1;
                 }
                 
-//    		if(red.unit_type.type_enum == Unit_Type.TYPE.TYPE_1) color = RED_1;
-//    		else color = (red.unit_type.type_enum == Unit_Type.TYPE.TYPE_2) ? RED_2 : RED_3;
+
     		
     		for(int row = red.location.x * _cellSize; row < (red.location.x + _unitSize) * _cellSize; row++) {
     			for(int col = red.location.y * _cellSize; col < (red.location.y + _unitSize) * _cellSize; col++) {
@@ -125,6 +147,42 @@ public class Rendering {
     		} 
     	}
     	
+        
+        // this works the way you expectr it to, with rows increasing in row number down vertically
+        // and with columns increasing in col number to the right horizontally
+//        for( int row = 30 * _cellSize; row < 150 * _cellSize; row++){
+//            for (int col = 70 * _cellSize; col < 90 * _cellSize; col++){
+//                map[col + (row * _width)] = RED_STRUCT_CENTER;
+//            }
+//        }
+        
+        
+        
+        for (Structure struct: state.red_structures){
+            for (Point p: new Point[]{struct.top_left, struct.top_right, struct.bottom_left, struct.bottom_right, struct.location}){
+//                System.out.println("Render red_structures");
+//                System.out.println(struct.top_left + "," + struct.top_right + "," + struct.bottom_left + "," + struct.bottom_right + "," + struct.location);
+                for(int row = p.x * _cellSize; row < (p.x + _unitSize) * _cellSize; row++) {
+                    for(int col = p.y * _cellSize; col < (p.y + _unitSize) * _cellSize; col++) {
+                            map[col + (row * _width)] = RED_STRUCT_CENTER;
+                    }
+                } 
+            }
+        }
+        
+
+        for (Structure struct: state.blue_structures){
+            for (Point p: new Point[]{struct.top_left, struct.top_right, struct.bottom_left, struct.bottom_right, struct.location}){
+//                System.out.println("Render blue_structures");
+//                System.out.println(struct.top_left + "," + struct.top_right + "," + struct.bottom_left + "," + struct.bottom_right + "," + struct.location);
+                for(int row = p.x * _cellSize; row < (p.x + _unitSize) * _cellSize; row++) {
+                    for(int col = p.y * _cellSize; col < (p.y + _unitSize) * _cellSize; col++) {
+                            map[col + (row * _width)] = BLUE_STRUCT_CENTER;
+                    }
+                } 
+            }
+        }
+
     	return map;
     }
 }

@@ -58,10 +58,23 @@ final public class Point{
         return Math.sqrt(Math.pow(a.x - b.x,2) + Math.pow(a.y - b.y,2));
     }
     
+    public static int manhattan_distance(Point a, Point b){
+         return Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
+    }
+    
     public static boolean point_is_inside(Point point, Point top_left, Point bottom_right){
-        return  point.x >= top_left.x       &&  point.y >= top_left.y &&
-                point.x <= bottom_right.x   &&  point.y <= bottom_right.y;
+        boolean res =
+                point.x >= top_left.x       &&  point.x <= bottom_right.x &&
+                point.y >= top_left.y       &&  point.y <= bottom_right.y;
+        return res;
                 
+    }
+    
+    public static Point midpoint(Point a, Point b){
+        int new_x, new_y;
+        new_x = a.x > b.x ? ((a.x - b.x) / 2) + b.x : ((b.x - a.x) / 2) + a.x;
+        new_y = a.y > b.y ? ((a.y - b.y) / 2) + b.y : ((b.y - a.y) / 2) + a.y;
+        return new Point(new_x, new_y);
     }
     
     @Override
@@ -70,7 +83,7 @@ final public class Point{
     }
     
     public static boolean in_top_half(Point p){
-        return p.x > p.y;
+        return p.x < p.y;
     }
     
     public static boolean check_if_passable(Point point){
