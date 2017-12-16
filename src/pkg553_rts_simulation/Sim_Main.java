@@ -33,6 +33,7 @@ public class Sim_Main{
     static Player red, blue;
     static Statistics stats = new Statistics();
     static Player winner = null;
+    static StochasticInput stch = new StochasticInput();
     
     static public void gold_disbursal(){
         if (ticks_since_last_arrival == 0){
@@ -155,8 +156,10 @@ public class Sim_Main{
     
  
     public static void main(String []args){
-
+        
         init_simulation();
+        
+        long start_time = System.currentTimeMillis();
         
         while (true){
             
@@ -171,6 +174,8 @@ public class Sim_Main{
             update_state();
             
         }
+        long end_time = System.currentTimeMillis();
+        System.out.println("Ticks: " + ticks + "\tElapsed time: " + ((end_time - start_time) / 1000.0));
     }
     
     public static void StatsSummary() {
