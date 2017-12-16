@@ -94,7 +94,7 @@ final public class Point{
     }
     
     public static boolean check_if_passable(Point point){
-        return Map.global_map[point.x][point.y] == Map.Terrain.GRASS;
+        return Map.global_map[point.x][point.y] != Map.Terrain.CLIFF;
     }
     
 

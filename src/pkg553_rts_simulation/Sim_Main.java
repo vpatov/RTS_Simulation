@@ -68,7 +68,7 @@ public class Sim_Main{
         if (Unit.count_units_in_state(player.force, Unit.Unit_State.IDLE) >= player.policy.max_idle_units ){
             for (Unit unit: player.force){
                 if (unit.unit_state == Unit.Unit_State.IDLE)
-                    unit.send_out(player);
+                    unit.send_out();
             }
         }
         
@@ -81,7 +81,7 @@ public class Sim_Main{
     //movement and attacking
     public static void update_state(){
 
-        System.out.println("Ticks: " + Sim_Main.ticks);
+        //System.out.println("Ticks: " + Sim_Main.ticks);
         gold_disbursal();
         policy_enactment(Sim_Main.red);
         policy_enactment(Sim_Main.blue);
@@ -89,9 +89,11 @@ public class Sim_Main{
         for (Unit unit: red.force){
             unit.update_state();
         }
+        red.trigger_sendout = false;
         for (Unit unit: blue.force){
             unit.update_state();
         }
+        blue.trigger_sendout = false;
         
         if (red.structures.isEmpty()){
             System.out.println("Blue won");
@@ -139,7 +141,7 @@ public class Sim_Main{
 
         System.out.println(red.structures.get(0).player);
         
-        red.policy.max_idle_units = 24;
+        red.policy.max_idle_units = 18;
         blue.policy.max_idle_units = 0;
         red.policy.unit_thresholds[2] = 20;
         red.policy.unit_thresholds[0] = 0;
@@ -154,17 +156,21 @@ public class Sim_Main{
  
     public static void main(String []args){
 
-//        init_simulation();
-//        
-//        while (true){
-//            
-//            gold_disbursal();
-//            policy_enactment(red);
-//            policy_enactment(blue);
-//
+        init_simulation();
+        
+        while (true){
+            
+            if (winner != null){
+                break;
+            }
+            gold_disbursal();
+            policy_enactment(red);
+            policy_enactment(blue);
 
-//            update_state();
-//        }
+
+            update_state();
+            
+        }
     }
     
     public static void StatsSummary() {

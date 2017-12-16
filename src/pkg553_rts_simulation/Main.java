@@ -128,20 +128,13 @@ public class Main extends Application {
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-  
-                
                 Sim_Main.update_state();
-               
-//                if (Sim_Main.ticks % 50 == 0) System.out.println(Sim_Main.StatsSummary());
                 Sim_Main.StatsSummary();
-                
             	gc.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
                 int[] buffer = rendering.getUpdatedDisplay();
-
                 PixelWriter p = gc.getPixelWriter();
                 p.setPixels(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT, pixelFormat, buffer, 0, CANVAS_WIDTH);
-                
-                
+
                 if (Sim_Main.winner != null){
                     timer.cancel();
                     return;
@@ -151,10 +144,6 @@ public class Main extends Application {
     }
     
 
-    public void init_mouse_debug(){
-
-    }
-    
     
     /**
      * @param args the command line arguments

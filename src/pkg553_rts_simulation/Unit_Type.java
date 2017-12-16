@@ -85,7 +85,7 @@ public class Unit_Type {
                 unit_types.put(type.type_enum,type);
             }
             types = TYPE.values();
-            System.out.println("Successfully loaded unit types.");
+            //System.out.println("Successfully loaded unit types.");
         }
         catch (FileNotFoundException e){
             System.err.println("Cannot find file: " + filepath);
