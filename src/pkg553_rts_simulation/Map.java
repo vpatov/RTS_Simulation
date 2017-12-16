@@ -24,9 +24,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Queue;
+
 import javax.imageio.ImageIO;
 /**
  *
@@ -49,6 +51,7 @@ public class Map {
     static ArrayList<Structure> all_structures;
     static ArrayList<Structure> blue_structures;
     static ArrayList<Structure> red_structures;
+    static HashMap<String, LinkedList<Point>>[][] paths;
     
   
     static final int GRASS_COLOR =          ((255 & 0xFF) << 24) | ((32 & 0xFF) << 16)  | ((192 & 0xFF) << 8)   | ((64 & 0xFF) << 0);
@@ -202,6 +205,22 @@ public class Map {
    }
 
     
+   public static void precalculatePaths() {
+	   paths = new HashMap[MAP_WIDTH][MAP_HEIGHT];
+		Unit u = new Unit(Unit_Type.TYPE.TYPE_1);
+		
+		for (int i = 0; i < Sim_Main.MAP_WIDTH; i++) {
+			for (int j = 0; j < Sim_Main.MAP_HEIGHT; j++) {
+				if (Map.global_map[i][j] == Map.Terrain.CLIFF) continue;
+				
+				paths[i][j] = new HashMap<String, LinkedList<Point>>();
+				u.location = new Point(i, j);
+				for (Structure s : Map.all_structures) {
+					paths[i][j].put(s.location.x + "," + s.location.y, u.find_path_to_point(s.location));
+				}
+			}
+		}
+   	}
    
    static Point[] r1 = new Point[]{new Point(8,184), new Point(8,191), new Point(15,184), new Point(15,191)};
    static Point[] r2 = new Point[]{new Point(19, 140), new Point(19, 147), new Point(26, 140), new Point(26, 147)};
