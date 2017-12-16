@@ -62,15 +62,7 @@ public class Main extends Application {
     static int CANVAS_HEIGHT = Y_CELLS * CELL_SIZE;
     static int UNIT_SIZE = 2;
     
-    // TODO kill all threads on application close
-    // TODO Improve performance of drawing cells - 
-    // take inspiration from 
-    // https://stackoverflow.com/questions/37648269/how-to-improve-performance-of-javafx-graphic-drawing
-    
-    // TODO Perform simulation separate from GUI threads, update some memory buffer 
-    // with easy to read state and then update GUI based on value of that memory 
-    // buffer. Simulation should happen faster than GUI reads from buffer.
-    
+
     public Scene initialize_gui(){   
         VBox root = new VBox();
         Pane control_pane = initializeControls(800);

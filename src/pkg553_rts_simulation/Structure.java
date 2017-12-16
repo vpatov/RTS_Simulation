@@ -40,14 +40,15 @@ public class Structure extends Sim_Obj{
 
     Point top_left, top_right, bottom_left, bottom_right;
     Player player;
+    String player_color;
     
-    public Structure(Point tl, Point tr, Point bl, Point br, Player player){
+    public Structure(Point tl, Point tr, Point bl, Point br){
         health = 3000;
         top_left = tl;
         top_right = tr;
         bottom_left = bl;
         bottom_right = br;
-        this.player = player;
+        player_color = player == Sim_Main.red ? "Red" : "Blue";
         
         type = Sim_Obj.Type.STRUCTURE;
 
@@ -65,7 +66,7 @@ public class Structure extends Sim_Obj{
     
     @Override
     public String toString(){
-        String out = (player.red ? "Red":"Blue") +  " Structure (" + health + "): ";
+        String out = player_color +  " Structure (" + health + "): ";
         for (Point p: new Point[]{top_left, top_right,bottom_left,bottom_right}){
             out+= p.toString();
         }

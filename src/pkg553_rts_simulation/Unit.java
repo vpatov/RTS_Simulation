@@ -88,7 +88,7 @@ public class Unit extends Sim_Obj implements Cloneable{
         return (player.red?  "Red":"Blue") + " unit at " + this.location;
     }
     
-    public static ArrayList<Unit> create_units(Unit_Type.TYPE type,Player _player, Sim_State state){
+    public static ArrayList<Unit> create_units(Unit_Type.TYPE type,Player _player){
         ArrayList<Unit> new_units = new ArrayList<>();
         Point starting_points[] = _player.red ? Map.red_starting_points : Map.blue_starting_points;
         
@@ -96,7 +96,7 @@ public class Unit extends Sim_Obj implements Cloneable{
             Unit new_unit = new Unit(type);
             new_unit.player = _player;
             
-            Point location = Point.find_empty_point(point, state);
+            Point location = Point.find_empty_point(point);
             if (location == null){
                 System.out.println("Map.find_empty_point(" + point +") has failed.");
                 System.exit(0);
@@ -120,17 +120,17 @@ public class Unit extends Sim_Obj implements Cloneable{
     }
     
     //is it returning a copy of a new unit?
-    public void update_state(Sim_State sim_state){  
-        ArrayList<Unit> enemies = player.red ? sim_state.blue_force : sim_state.red_force;
-        ArrayList<Structure> enemy_structures = player.red ? sim_state.blue_structures : sim_state.red_structures;
-        ArrayList<Structure> enemy_dead_structures = player.red ? sim_state.blue_dead_structures : sim_state.red_dead_structures;
+    public void update_state(){  
+        ArrayList<Unit> enemies = player.enemy_force;
+        ArrayList<Structure> enemy_structures = player.enemy_structures;
+        ArrayList<Structure> enemy_dead_structures = player.enemy_dead_structures;
         switch (this.unit_state){
             
             //if its moving, but it discovers an enemy nearby, it should switch to attacking.
             case MOVING: {
 
                 if (path == null){
-                    path = find_path_to_point(player.red ? Map.blue_base : Map.red_base, sim_state);
+                    path = find_path_to_point(player.enemy.corner);
                 }
 
                 if (!path.isEmpty()){
@@ -141,14 +141,15 @@ public class Unit extends Sim_Obj implements Cloneable{
                     this.unit_state = Unit_State.IDLE;
                 }
                 
-                Structure struct = look_for_enemy_structures(sim_state);
+                Structure struct = look_for_enemy_structures();
                 if (struct != null){
                     this.unit_state = Unit_State.ATTACKING;
                     this.enemy_target = struct;
+                    break;
                 }
                 
 
-                Unit unit = look_for_enemies(sim_state);
+                Unit unit = look_for_enemies();
                 if (unit != null){
                     this.unit_state = Unit_State.ATTACKING;
                     this.enemy_target = unit;
@@ -159,15 +160,15 @@ public class Unit extends Sim_Obj implements Cloneable{
                 
                 
             case ATTACKING: {
-                int min_target_distance = enemy_target.type == Sim_Obj.Type.UNIT ? 6:8;
+                int min_target_distance = enemy_target.type == Sim_Obj.Type.UNIT ? 6:9;
                 
                 if (distance(enemy_target) > min_target_distance){
                     this.unit_state = Unit_State.MOVING;
-                    System.out.println("Enemy is out of range. Starting to move");
+//                    System.out.println("Enemy is out of range. Starting to move");
                 }
                 else {
                     enemy_target.health -= this.unit_type.damage_max;
-                    System.out.println(player.red?"Red":"Blue" + " unit at " + location + "just hit enemy " +(enemy_target.type == Sim_Obj.Type.UNIT ? "unit":"structure")+ " at " + enemy_target.location + " for " + unit_type.damage_max);
+//                    System.out.println((player.red?"Red":"Blue") + " unit at " + location + "just hit enemy " +(enemy_target.type == Sim_Obj.Type.UNIT ? "unit":"structure")+ " at " + enemy_target.location + " for " + unit_type.damage_max);
                     Statistics.updateDamage(!this.player.red, this.unit_type.damage_max);
                             
                     if (enemy_target.health <= 0){
@@ -188,7 +189,7 @@ public class Unit extends Sim_Obj implements Cloneable{
             }
                 
             case IDLE: {
-                    Unit unit = look_for_enemies(sim_state);
+                    Unit unit = look_for_enemies();
                     if (unit != null){
                         this.unit_state = Unit_State.ATTACKING;
                         this.enemy_target = unit;
@@ -200,8 +201,8 @@ public class Unit extends Sim_Obj implements Cloneable{
    
     }
     
-    public Unit look_for_enemies(Sim_State sim_state){
-        ArrayList<Unit> enemies = player.red ? sim_state.blue_force : sim_state.red_force;
+    public Unit look_for_enemies(){
+        ArrayList<Unit> enemies = player.enemy_force;
         for (Unit unit: enemies){
             if ((int)distance(unit) <= 6){
                 return unit;
@@ -210,8 +211,8 @@ public class Unit extends Sim_Obj implements Cloneable{
         return null;
     }
     
-    public Structure look_for_enemy_structures(Sim_State state){
-        ArrayList<Structure> enemy_structures = player.red ? state.blue_structures : state.red_structures;
+    public Structure look_for_enemy_structures(){
+        ArrayList<Structure> enemy_structures = player.enemy_structures;
         for (Structure struct: enemy_structures){
             if (struct.distance_to_center(location) <= 8){
                 return struct;
@@ -220,15 +221,15 @@ public class Unit extends Sim_Obj implements Cloneable{
         return null;
     }
     
-    
-    public void send_out(Player player, Sim_State sim_state){
-        path = find_path_to_point(player.red? Map.blue_base: Map.red_base, sim_state);
+    /** @TODO generate starting points */
+    public void send_out(Player player){
+        path = find_path_to_point(player.enemy.corner);
         unit_state = Unit_State.MOVING;
     }
     
     
     // find a path from dest to s
-    public LinkedList<Point> find_path_to_point(Point dest, Sim_State state){
+    public LinkedList<Point> find_path_to_point(Point dest){
         
         class Node implements Comparable{
             int cost;

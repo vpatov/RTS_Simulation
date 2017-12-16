@@ -24,8 +24,7 @@ public class Sim_Main{
     static Map map;
     static int MAP_WIDTH = 200;
     static int MAP_HEIGHT = 200;
-    static int STATE_BUFFER_SIZE = 500;
-    static Sim_State state_buffer[];
+
     static int ticks = 0;
     static int ticks_since_last_arrival = 0;
     static int current_gold_index = 0;
@@ -53,25 +52,23 @@ public class Sim_Main{
 
     
     public static void policy_enactment(Player player){
-        Sim_State current = state_buffer[ticks % STATE_BUFFER_SIZE];
-        ArrayList<Unit> force = (player.red)?current.red_force:current.blue_force;
         ArrayList<Unit> new_units = null;
         for (int i = 0; i < player.policy.gold.length; i++){
             if (player.gold > player.policy.gold[i] &&
-                Unit_Type.count_unit_type(force, Unit_Type.types[i]) < 
+                Unit_Type.count_unit_type(player.force, Unit_Type.types[i]) < 
                     player.policy.unit_thresholds[i]
                 ){
-                new_units = Unit.create_units(Unit_Type.types[i], player, current);
-                force.addAll(new_units);
+                new_units = Unit.create_units(Unit_Type.types[i], player);
+                player.force.addAll(new_units);
                 
                 if (player == blue) stats.unitsBuiltBlue += new_units.size();
                 else stats.unitsBuiltRed += new_units.size();
             }
         }
-        if (Unit.count_units_in_state(force, Unit.Unit_State.IDLE) >= player.policy.max_idle_units ){
-            for (Unit unit: force){
+        if (Unit.count_units_in_state(player.force, Unit.Unit_State.IDLE) >= player.policy.max_idle_units ){
+            for (Unit unit: player.force){
                 if (unit.unit_state == Unit.Unit_State.IDLE)
-                    unit.send_out(player,current);
+                    unit.send_out(player);
             }
         }
         
@@ -83,54 +80,64 @@ public class Sim_Main{
     
     //movement and attacking
     public static void update_state(){
-        Sim_State current = state_buffer[ticks % STATE_BUFFER_SIZE];
-        
+
         System.out.println("Ticks: " + Sim_Main.ticks);
         gold_disbursal();
         policy_enactment(Sim_Main.red);
         policy_enactment(Sim_Main.blue);
         
-        for (Unit unit: current.red_force){
-            unit.update_state(current);
+        for (Unit unit: red.force){
+            unit.update_state();
         }
-        for (Unit unit: current.blue_force){
-            unit.update_state(current);
+        for (Unit unit: blue.force){
+            unit.update_state();
         }
         
-        if (current.red_structures.isEmpty()){
+        if (red.structures.isEmpty()){
             System.out.println("Blue won");
             winner = blue;
         }
-        if (current.blue_structures.isEmpty()){
+        if (blue.structures.isEmpty()){
             System.out.println("Red won");
             winner = red;
         }
-        
-        state_buffer[(ticks + 1) % STATE_BUFFER_SIZE] = state_buffer[ticks % STATE_BUFFER_SIZE];
+
         ticks++;
     }
     
+    public static void init_players(){
+        red = new Player(true, Map.red_structures); //red on top
+        blue = new Player(false, Map.blue_structures); // blue on bottom
+        
+        red.enemy = blue;
+        red.enemy_force = blue.force;
+        red.enemy_structures = blue.structures;
+        red.enemy_dead_structures = blue.dead_structures;
+        
+        blue.enemy = red;
+        blue.enemy_force = red.force;
+        blue.enemy_structures = red.structures;
+        blue.enemy_dead_structures = red.dead_structures;
+        
+        for (Structure struct: red.structures)
+            struct.player = red;
+        for (Structure struct: blue.structures)
+            struct.player = blue;
+        
+        
+        Map.init_starting_points(red);
+        Map.init_starting_points(blue);
+    }
     
     public static void init_simulation(){
         Map.load_terrain("maps/map_01_mirrored.bmp");
         Unit_Type.init_unit_types("params/unit_types.txt");
-
-        red = new Player(true); //red on top
-        blue = new Player(false); // blue on bottom
         Map.load_structures();
-        state_buffer = new Sim_State[STATE_BUFFER_SIZE];
-        state_buffer[0] = new Sim_State();
-        state_buffer[0].blue_structures = Map.blue_structures;
-        state_buffer[0].red_structures = Map.red_structures;
-        
 
-        
-//        red.policy.max_idle_units = 6;
-//        blue.policy.max_idle_units = 0;
-//        red.policy.unit_thresholds[2] = 20;
-//        red.policy.unit_thresholds[0] = 10;
-//        red.policy.gold[2] = Unit_Type.unit_types.get(Unit_Type.TYPE.TYPE_3).gold_cost;
-        
+       
+        init_players();
+
+        System.out.println(red.structures.get(0).player);
         
         red.policy.max_idle_units = 24;
         blue.policy.max_idle_units = 0;
@@ -138,14 +145,6 @@ public class Sim_Main{
         red.policy.unit_thresholds[0] = 0;
         red.policy.unit_thresholds[1] = 0;
         red.policy.gold[2] = Unit_Type.unit_types.get(Unit_Type.TYPE.TYPE_3).gold_cost;
-        
-//        blue.policy.max_idle_units = 24;
-//        red.policy.max_idle_units = 0;
-//        blue.policy.unit_thresholds[2] = 20;
-//        blue.policy.unit_thresholds[0] = 0;
-//        blue.policy.unit_thresholds[1] = 0;
-//        blue.policy.gold[2] = Unit_Type.unit_types.get(Unit_Type.TYPE.TYPE_3).gold_cost;
-        
         
         
     }
@@ -169,20 +168,19 @@ public class Sim_Main{
     }
     
     public static void StatsSummary() {
-    	Sim_State current = state_buffer[ticks % STATE_BUFFER_SIZE];
     	
     	int buildingHealthBlue = 0, buildingHealthRed = 0;
     	int enemyTerritoryUnitsBlue = 0;
     	int enemyTerritoryUnitsRed = 0;
-        int unitsLostBlue = stats.unitsBuiltBlue - current.blue_force.size();
-        int unitsLostRed = stats.unitsBuiltRed - current.red_force.size();
+        int unitsLostBlue = stats.unitsBuiltBlue - blue.force.size();
+        int unitsLostRed = stats.unitsBuiltRed - red.force.size();
 
-//		for (Structure b : current.blue_structures) { buildingHealthBlue += b.health; }
-//		for (Structure r : current.red_structures) 	{ buildingHealthRed += r.health; }
-        for (Unit b : current.blue_force) { 
+//		for (Structure b : current_state.blue_structures) { buildingHealthBlue += b.health; }
+//		for (Structure r : current_state.red_structures) 	{ buildingHealthRed += r.health; }
+        for (Unit b : blue.force) { 
                 if (b.location.y > b.location.x) enemyTerritoryUnitsBlue++; 
         }
-        for (Unit r : current.red_force) { 
+        for (Unit r : red.force) { 
                 if (r.location.y < r.location.x) enemyTerritoryUnitsRed++; 
         }
 
@@ -190,10 +188,10 @@ public class Sim_Main{
 //				+ "Dealt\tUnits in Enemy Territory";
         String summaryBlue = String.format("%d,%d,%d,%d,%d,%d,%d,%d",
                         stats.totalGold, stats.totalGold - blue.gold, stats.unitsBuiltBlue, unitsLostBlue, 
-                        current.blue_structures.size(), buildingHealthBlue, stats.damageDealtBlue, enemyTerritoryUnitsBlue);
+                        blue.structures.size(), buildingHealthBlue, stats.damageDealtBlue, enemyTerritoryUnitsBlue);
         String summaryRed =String.format("%d,%d,%d,%d,%d,%d,%d,%d",
                         stats.totalGold, stats.totalGold - red.gold, stats.unitsBuiltRed, unitsLostRed, 
-                        current.red_structures.size(), buildingHealthRed, stats.damageDealtRed, enemyTerritoryUnitsRed);
+                        red.structures.size(), buildingHealthRed, stats.damageDealtRed, enemyTerritoryUnitsRed);
 //		return summary + "\n" + summaryBlue + "\n" + summaryRed;
         stats.appendToStatsFile(summaryBlue + "," + summaryRed + "\n");
 	}
