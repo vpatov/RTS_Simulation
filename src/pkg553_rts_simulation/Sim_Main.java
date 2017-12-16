@@ -19,19 +19,25 @@
 package pkg553_rts_simulation;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class Sim_Main{
     static Map map;
     static int MAP_WIDTH = 200;
     static int MAP_HEIGHT = 200;
 
+    static Point[] red_starting_points;
+    static Point[] blue_starting_points;
+    static Policy[] policies;
+    static StochasticInput[] stchs;
     
     static int ticks = 0;
     static int ticks_until_next_arrival = 0;
     static Player red, blue;
-    static Statistics stats = new Statistics();
+    static Statistics stats = Statistics.get_statistics();
     static Player winner = null;
-    static StochasticInput stch = new StochasticInput();
+    static StochasticInput stch;
+    static int simul_count = 0;
     
     static public void gold_disbursal(){
         int gold;
@@ -96,26 +102,24 @@ public class Sim_Main{
         blue.trigger_sendout = false;
         
         if (red.structures.isEmpty()){
-            System.out.println("Blue won");
             winner = blue;
             
-            String data = String.format("%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d\n", stats.runId, 
+            String data = String.format("%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d\n", simul_count, 
             		System.currentTimeMillis(), red.policy.gold[0], red.policy.unit_thresholds[0], red.policy.gold[1], 
             		red.policy.unit_thresholds[1], red.policy.gold[2], red.policy.unit_thresholds[2], red.policy.max_idle_units,
             		blue.policy.gold[0], blue.policy.unit_thresholds[0], blue.policy.gold[1], blue.policy.unit_thresholds[1], 
             		blue.policy.gold[2], blue.policy.unit_thresholds[2], blue.policy.max_idle_units, ticks +1);
-            stats.appendToFile(Statistics.LOSS_FILE, data);
+            stats.append_to_file(Statistics.LOSS_FILE, data);
         }
         if (blue.structures.isEmpty()){
-            System.out.println("Red won");
             winner = red;
             
-            String data = String.format("%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d\n", stats.runId, 
+            String data = String.format("%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d\n", simul_count, 
             		System.currentTimeMillis(), red.policy.gold[0], red.policy.unit_thresholds[0], red.policy.gold[1], 
             		red.policy.unit_thresholds[1], red.policy.gold[2], red.policy.unit_thresholds[2], red.policy.max_idle_units,
             		blue.policy.gold[0], blue.policy.unit_thresholds[0], blue.policy.gold[1], blue.policy.unit_thresholds[1], 
             		blue.policy.gold[2], blue.policy.unit_thresholds[2], blue.policy.max_idle_units, ticks +1);
-            stats.appendToFile(Statistics.WIN_FILE, data);
+            stats.append_to_file(Statistics.WIN_FILE, data);
         }
 
         ticks++;
@@ -126,6 +130,9 @@ public class Sim_Main{
     public static void init_players(Policy red_policy, Policy blue_policy){
         red = new Player(true, Map.red_structures, red_policy); //red on top
         blue = new Player(false, Map.blue_structures, blue_policy); // blue on bottom
+        
+        red.structures = Map.hardcode_red_structs();
+        blue.structures = Map.hardcode_blue_structs();
         
         red.enemy = blue;
         red.enemy_force = blue.force;
@@ -143,8 +150,7 @@ public class Sim_Main{
             struct.player = blue;
         
         
-        Map.init_starting_points(red);
-        Map.init_starting_points(blue);
+        
     }
     
     
@@ -157,6 +163,9 @@ public class Sim_Main{
         Map.load_terrain("maps/map_01_mirrored.bmp");
         Unit_Type.init_unit_types("params/unit_types.txt");
         Map.load_structures();
+        
+        red_starting_points = Map.init_starting_points(true);
+        blue_starting_points = Map.init_starting_points(false);
 
         Map.precalculatePaths();
         
@@ -165,22 +174,12 @@ public class Sim_Main{
         
     }
     
-    public static void start_simulation(Policy red_policy, Policy blue_policy,StochasticInput stch){
-                init_players(red_policy,blue_policy);
-
-    }
-    
-
-    
- 
-    public static void main(String []args){
-        
-        
-        
-        
-        init_simulation();
-        start_simulation(new Policy(), new Policy(), stch);
-        long start_time = System.currentTimeMillis();
+    public static void run_simulation(Policy red_policy, Policy blue_policy,StochasticInput cur_stch){
+        winner = null;
+        stch = cur_stch;
+        ticks = 0;
+        ticks_until_next_arrival = 0;
+        init_players(red_policy,blue_policy);
         
         while (true){
             
@@ -195,8 +194,45 @@ public class Sim_Main{
             update_state();
             
         }
-        long end_time = System.currentTimeMillis();
-        System.out.println("Ticks: " + ticks + "\tElapsed time: " + ((end_time - start_time) / 1000.0));
+        
+        
+
+    }
+    
+
+       
+    
+ 
+    public static void run_many(){
+        
+        int i,j,k;
+        long start_time, end_time;
+        
+        init_simulation();
+        Random r = new Random();
+        policies = Policy.generate_configurations();
+        stchs = StochasticInput.generate_configurations();
+        
+        
+        
+        for (i = 0; i < policies.length; i++){
+            while ((j = r.nextInt(policies.length)) != i);
+            for (k = 0; k < stchs.length; k++){
+                start_time = System.currentTimeMillis();
+                run_simulation(policies[i],policies[j],stchs[k]);
+                end_time = System.currentTimeMillis();
+                System.out.println("Simulation: " + simul_count + (winner == red ? "\tRed Won.": "\tBlue Won.") + 
+                        "\tTicks: " + ticks + "\tElapsed time: " + ((end_time - start_time) / 1000.0));
+                simul_count++;
+
+            }
+            
+        }
+        
+    }
+    
+    public static void main(String[]args){
+        run_many();
     }
     
     public static void StatsSummary() {
@@ -207,8 +243,8 @@ public class Sim_Main{
         int unitsLostBlue = stats.unitsBuiltBlue - blue.force.size();
         int unitsLostRed = stats.unitsBuiltRed - red.force.size();
 
-		for (Structure b : blue.structures) { buildingHealthBlue += b.health; }
-		for (Structure r : red.structures) 	{ buildingHealthRed += r.health; }
+        for (Structure b : blue.structures) { buildingHealthBlue += b.health; }
+        for (Structure r : red.structures) 	{ buildingHealthRed += r.health; }
         for (Unit b : blue.force) { 
                 if (b.location.y > b.location.x) enemyTerritoryUnitsBlue++; 
         }
@@ -225,6 +261,6 @@ public class Sim_Main{
                         stats.totalGold, stats.totalGold - red.gold, stats.unitsBuiltRed, unitsLostRed, 
                         red.structures.size(), buildingHealthRed, stats.damageDealtRed, enemyTerritoryUnitsRed);
 //		return summary + "\n" + summaryBlue + "\n" + summaryRed;
-        stats.appendToFile(stats.statsFile, summaryBlue + "," + summaryRed + "\n");
+        stats.append_to_file(stats.STATS_FILE, summaryBlue + "," + summaryRed + "\n");
 	}
 }

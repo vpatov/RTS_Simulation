@@ -62,7 +62,6 @@ public class Player {
     boolean trigger_sendout = false;
 
     
-    Point[] starting_unit_points;
     
 
     public Player(boolean red, ArrayList<Structure> structures){
