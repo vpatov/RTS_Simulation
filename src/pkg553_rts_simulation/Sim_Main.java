@@ -128,7 +128,7 @@ public class Sim_Main{
         
         ticks++;
         
-        if (ticks >= 50000){
+        if (ticks >= 2000){
             return false;
         }
         return true;
@@ -186,7 +186,7 @@ public class Sim_Main{
         
     }
     
-    public static void run_simulation(Policy red_policy, Policy blue_policy,StochasticInput cur_stch){
+    public static boolean run_simulation(Policy red_policy, Policy blue_policy,StochasticInput cur_stch){
         winner = null;
         stch = cur_stch;
         ticks = 0;
@@ -204,10 +204,11 @@ public class Sim_Main{
 
 
             if (!update_state()){
-                return;
+                return false;
             }
             
         }
+        return true;
         
         
 
@@ -234,19 +235,31 @@ public class Sim_Main{
 //        for (StochasticInput st: stchs){
 //            System.out.println(st);
 //        }
-        
+        int count_draws = 0;
+        boolean draw;
+        System.out.println("About to perform " + policies.length * stchs.length + " simulations.");
         for (i = 0; i < policies.length; i++){
-            while ((j = r.nextInt(policies.length)) != i);
+            count_draws = 0;
+            while ((j = r.nextInt(policies.length)) == i);
             for (k = 0; k < stchs.length; k++){
+                if (simul_count != 4609){
+                    simul_count++;
+                    continue;
+                }
                 start_time = System.currentTimeMillis();
-                run_simulation(policies[i],policies[j],stchs[k]);
+                draw = run_simulation(policies[i],policies[j],stchs[k]);
                 end_time = System.currentTimeMillis();
                 System.out.println("Simulation: " + simul_count + (winner == red ? "\tRed Won.": "\tBlue Won.") + 
                         "\tTicks: " + ticks + "\tElapsed time: " + ((end_time - start_time) / 1000.0));
+                System.out.println("Red policy: " + policies[i] + "\tBlue policy: " + policies[j] + "\t Stochastic Input: " + stchs[k]);
                 simul_count++;
-//                if (simul_count == 161){
-//                    int noop = 50;
-//                }
+                
+                if (draw){
+                    count_draws++;
+                }
+                if (count_draws > 5){
+                    break;
+                }
 
             }
             

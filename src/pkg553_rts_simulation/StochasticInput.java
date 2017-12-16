@@ -87,8 +87,8 @@ public class StochasticInput {
             This means there will be lgc different gold_ceiling values, ltc different 
             time_ceiling values, lps different point_seed values, and so forth...
         */
-        lgc = 3;    ltc = 3;    lps = 2; 
-        lgs = 3;    lts = 3;    ltm = 2;
+        lgc = 3;    ltc = 3;    lps = 1; 
+        lgs = 1;    lts = 1;    ltm = 1;
         
         bgc = 30;   btc = 20;   bps = 1;
         bgs = 1;    bts = 1;    btm = 10;

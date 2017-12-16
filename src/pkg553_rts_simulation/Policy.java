@@ -56,11 +56,11 @@ public class Policy {
         /*
             handpicked, doesn't have to be these values, but they seemed good
         */
-        lg1 = 5;   lg2 = 5;    lg3 = 5; 
+        lg1 = 3;   lg2 = 3;    lg3 = 3; 
         lt1 = 3;   lt2 = 3;    lt3 = 3;
         lidle = 5;
         
-        bg1 = 30;   bg2 = 20;   bg3 = 1;
+        bg1 = 60;   bg2 = 80;   bg3 = 200;
         bt1 = 5;    bt2 = 5;    bt3 = 5;
         bidle = 4;
 
