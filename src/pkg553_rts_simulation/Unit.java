@@ -248,6 +248,8 @@ public class Unit extends Sim_Obj implements Cloneable{
     
     /** @TODO generate starting points */
     public void send_out(){
+        if (player.enemy_structures.isEmpty())
+            return;
         structure_target_index = (structure_target_index + 1) % player.enemy_structures.size();
         path = find_path_to_point(player.enemy_structures.get(structure_target_index).location);
         unit_state = Unit_State.MOVING;
