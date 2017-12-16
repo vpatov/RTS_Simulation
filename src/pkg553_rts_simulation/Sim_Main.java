@@ -268,7 +268,7 @@ public class Sim_Main{
             //iterate from front and back
 //            for (int pair: new int[]{i,policies.length - i - 1}){
                 for (k = 0; k < stchs.length; k++){
-
+                	stats.resetStats();
                     start_time = System.currentTimeMillis();
 
                     //returns false if successful, true if draw
@@ -322,13 +322,14 @@ public class Sim_Main{
 
 //		String summary = "Player\tGold Collected\tGold Spent\tUnits Built\tUnits Lost\tBuildings Standing\tBuilding Health\tDamage "
 //				+ "Dealt\tUnits in Enemy Territory";
-        String summaryBlue = String.format("%d,%d,%d,%d,%d,%d,%d,%d,%d",
-                        ticks,stats.totalGold, stats.totalGold - blue.gold, stats.unitsBuiltBlue, unitsLostBlue, 
+        String summary = simul_count + "," + ticks + ",";
+        String summaryBlue = String.format("%d,%d,%d,%d,%d,%d,%d,%d",
+                        stats.totalGold, stats.totalGold - blue.gold, stats.unitsBuiltBlue, unitsLostBlue, 
                         blue.structures.size(), buildingHealthBlue, stats.damageDealtBlue, enemyTerritoryUnitsBlue);
-        String summaryRed =String.format("%d,%d,%d,%d,%d,%d,%d,%d,%d",
-                        ticks,stats.totalGold, stats.totalGold - red.gold, stats.unitsBuiltRed, unitsLostRed, 
+        String summaryRed =String.format("%d,%d,%d,%d,%d,%d,%d,%d",
+                        stats.totalGold, stats.totalGold - red.gold, stats.unitsBuiltRed, unitsLostRed, 
                         red.structures.size(), buildingHealthRed, stats.damageDealtRed, enemyTerritoryUnitsRed);
 //		return summary + "\n" + summaryBlue + "\n" + summaryRed;
-        stats.append_to_file(stats.STATS_FILE, summaryBlue + "," + summaryRed + "\n");
+        stats.append_to_file(stats.STATS_FILE, summary + summaryBlue + "," + summaryRed + "\n");
 	}
 }
