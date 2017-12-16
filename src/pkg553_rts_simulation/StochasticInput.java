@@ -24,14 +24,40 @@ package pkg553_rts_simulation;
 
 import java.util.ArrayList;
 import java.util.Random;
+//import org.apache.commons.math3.distribution;
 
 public class StochasticInput {
     
-    static Random random_point = new Random(5);
+    Random random_point;
+    Random random_gold;
+    Random random_time;
     
     
-    public static int pick_point(int length){
+
+    
+    int gold_ceiling;
+    int time_ceiling;
+    
+    //default seeds
+    public StochasticInput(){
+        gold_ceiling = 100;
+        time_ceiling = 20;
+        random_point = new Random(5);
+        random_gold = new Random(5);
+        random_time = new Random(5);
+    }
+    
+    
+    public int pick_point(int length){
         return random_point.nextInt(length);
+    }
+    
+    public int get_gold(){
+        return random_gold.nextInt(gold_ceiling);
+    }
+    
+    public int get_time(){
+        return random_time.nextInt(time_ceiling); 
     }
     
     

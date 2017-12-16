@@ -101,7 +101,7 @@ public class Unit extends Sim_Obj implements Cloneable{
             Unit new_unit = new Unit(type);
             new_unit.player = _player;
             
-            index = StochasticInput.pick_point(starting_points.length);
+            index = Sim_Main.stch.pick_point(starting_points.length);
             point = starting_points[index];
             
             Point location = Point.find_empty_point(point);
