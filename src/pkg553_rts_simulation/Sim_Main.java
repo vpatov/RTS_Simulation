@@ -34,9 +34,10 @@ public class Sim_Main{
     static int ticks = 0;
     static int ticks_until_next_arrival = 0;
     static Player red, blue;
-    static Statistics stats = new Statistics();
+    static Statistics stats = Statistics.get_statistics();
     static Player winner = null;
     static StochasticInput stch;
+    static int simul_count = 0;
     
     static public void gold_disbursal(){
         int gold;
@@ -101,26 +102,24 @@ public class Sim_Main{
         blue.trigger_sendout = false;
         
         if (red.structures.isEmpty()){
-            System.out.println("Blue won");
             winner = blue;
             
-            String data = String.format("%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d\n", stats.runId, 
+            String data = String.format("%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d\n", simul_count, 
             		System.currentTimeMillis(), red.policy.gold[0], red.policy.unit_thresholds[0], red.policy.gold[1], 
             		red.policy.unit_thresholds[1], red.policy.gold[2], red.policy.unit_thresholds[2], red.policy.max_idle_units,
             		blue.policy.gold[0], blue.policy.unit_thresholds[0], blue.policy.gold[1], blue.policy.unit_thresholds[1], 
             		blue.policy.gold[2], blue.policy.unit_thresholds[2], blue.policy.max_idle_units, ticks +1);
-            stats.appendToFile(Statistics.LOSS_FILE, data);
+            stats.append_to_file(Statistics.LOSS_FILE, data);
         }
         if (blue.structures.isEmpty()){
-            System.out.println("Red won");
             winner = red;
             
-            String data = String.format("%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d\n", stats.runId, 
+            String data = String.format("%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d\n", simul_count, 
             		System.currentTimeMillis(), red.policy.gold[0], red.policy.unit_thresholds[0], red.policy.gold[1], 
             		red.policy.unit_thresholds[1], red.policy.gold[2], red.policy.unit_thresholds[2], red.policy.max_idle_units,
             		blue.policy.gold[0], blue.policy.unit_thresholds[0], blue.policy.gold[1], blue.policy.unit_thresholds[1], 
             		blue.policy.gold[2], blue.policy.unit_thresholds[2], blue.policy.max_idle_units, ticks +1);
-            stats.appendToFile(Statistics.WIN_FILE, data);
+            stats.append_to_file(Statistics.WIN_FILE, data);
         }
 
         ticks++;
@@ -222,7 +221,10 @@ public class Sim_Main{
                 start_time = System.currentTimeMillis();
                 run_simulation(policies[i],policies[j],stchs[k]);
                 end_time = System.currentTimeMillis();
-                System.out.println("Ticks: " + ticks + "\tElapsed time: " + ((end_time - start_time) / 1000.0));
+                System.out.println("Simulation: " + simul_count + (winner == red ? "\tRed Won.": "\tBlue Won.") + 
+                        "\tTicks: " + ticks + "\tElapsed time: " + ((end_time - start_time) / 1000.0));
+                simul_count++;
+
             }
             
         }
@@ -241,8 +243,8 @@ public class Sim_Main{
         int unitsLostBlue = stats.unitsBuiltBlue - blue.force.size();
         int unitsLostRed = stats.unitsBuiltRed - red.force.size();
 
-		for (Structure b : blue.structures) { buildingHealthBlue += b.health; }
-		for (Structure r : red.structures) 	{ buildingHealthRed += r.health; }
+        for (Structure b : blue.structures) { buildingHealthBlue += b.health; }
+        for (Structure r : red.structures) 	{ buildingHealthRed += r.health; }
         for (Unit b : blue.force) { 
                 if (b.location.y > b.location.x) enemyTerritoryUnitsBlue++; 
         }
@@ -259,6 +261,6 @@ public class Sim_Main{
                         stats.totalGold, stats.totalGold - red.gold, stats.unitsBuiltRed, unitsLostRed, 
                         red.structures.size(), buildingHealthRed, stats.damageDealtRed, enemyTerritoryUnitsRed);
 //		return summary + "\n" + summaryBlue + "\n" + summaryRed;
-        stats.appendToFile(stats.statsFile, summaryBlue + "," + summaryRed + "\n");
+        stats.append_to_file(stats.STATS_FILE, summaryBlue + "," + summaryRed + "\n");
 	}
 }
