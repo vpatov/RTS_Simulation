@@ -283,7 +283,7 @@ public class Sim_Main{
                     if (draw){
                         count_draws++;
                     }
-                    if (count_draws > 2){
+                    if (count_draws > 1){
                         count_draws = 0;
                         break;
                     }
