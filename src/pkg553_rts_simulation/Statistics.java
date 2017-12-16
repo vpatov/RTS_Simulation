@@ -4,6 +4,8 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Statistics {
         private static Statistics singleton;
@@ -40,7 +42,34 @@ public class Statistics {
             set_iter_count();
             init_win_loss_files();
             init_stats_file();
+            Runtime.getRuntime().addShutdownHook(new ProcessorHook());
+
 	}
+        
+        class ProcessorHook extends Thread {
+
+            @Override
+            public void run(){
+                try {
+                    System.out.println("Terminated prematurely, wrapping up files...");
+                    
+                    win_writer.flush();
+                    loss_writer.flush();
+                    stats_writer.flush();
+                    
+                    // may not be necessary to flush and close.
+                    
+                    win_writer.close();
+                    loss_writer.close();
+                    stats_writer.close();
+                    
+                    
+                } catch (IOException ex) {
+                    Logger.getLogger(Statistics.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+            }
+    }
         
         public static Statistics get_statistics(){
             if (singleton == null){
@@ -108,6 +137,7 @@ public class Statistics {
                                       f == LOSS_FILE ? loss_writer : stats_writer;
             try {
                 bfwriter.write(text);
+                bfwriter.flush();
             }
             catch (IOException e){
                 e.printStackTrace();

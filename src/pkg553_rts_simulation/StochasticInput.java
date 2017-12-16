@@ -32,8 +32,11 @@ public class StochasticInput {
     Random random_gold;
     PoissonDistribution random_time;
     
+    
+    
     int gold_ceiling;
     int time_ceiling;
+    int ps, gs, ts, tm;
     
     //default seeds
     public StochasticInput(){
@@ -43,6 +46,10 @@ public class StochasticInput {
     public StochasticInput(int gold_ceiling, int time_ceiling, int point_seed, int gold_seed, int time_seed, int time_mean){
         this.gold_ceiling = 100;
         this.time_ceiling = 100;
+        ps = point_seed;
+        gs = gold_seed;
+        ts = time_seed;
+        tm = time_mean;
         random_point = new Random(point_seed);
         random_gold = new Random(gold_seed);
         random_time = new PoissonDistribution(time_mean);
@@ -64,6 +71,10 @@ public class StochasticInput {
         return random_time.sample();
     }
     
+    @Override
+    public String toString(){
+        return gold_ceiling + ", " + time_ceiling + ", " + ps + ", " + gs + ", " + ts + ", " + tm;
+    }
     
     public static StochasticInput[] generate_configurations(){
         StochasticInput[] stchs;
