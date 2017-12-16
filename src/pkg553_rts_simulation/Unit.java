@@ -93,7 +93,7 @@ public class Unit extends Sim_Obj implements Cloneable{
     
     public static ArrayList<Unit> create_units(Unit_Type.TYPE type,Player _player){
         ArrayList<Unit> new_units = new ArrayList<>();
-        Point starting_points[] = _player.starting_unit_points;
+        Point starting_points[] = _player.red ? Sim_Main.red_starting_points : Sim_Main.blue_starting_points;
         Point point;
         int index;
         

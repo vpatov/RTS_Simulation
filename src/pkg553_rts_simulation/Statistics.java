@@ -44,7 +44,7 @@ public class Statistics {
 	}
 	
 	public void assureStatsFile() {
-		File f = new File(dir);
+            File f = new File(dir);
 	    File[] files = f.listFiles();
 
 	    int count = 0;
