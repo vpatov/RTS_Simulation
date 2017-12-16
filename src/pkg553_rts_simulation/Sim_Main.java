@@ -64,7 +64,7 @@ public class Sim_Main{
         for (int m = 0; m < player.policy.gold.length; m++){
             i = (int)(player.rule_num % (player.policy.gold.length));
             player.rule_num += 1;
-            if (player.gold > player.policy.gold[i] && 
+            if (player.gold > player.policy.gold[i] && player.gold > Unit_Type.unit_types.get(Unit_Type.types[i]).gold_cost &&
                 (Unit_Type.count_unit_type(player.force, Unit_Type.types[i]) / tot_units <= 
                     player.policy.unit_thresholds[i] || tot_units == 0)
                 ){

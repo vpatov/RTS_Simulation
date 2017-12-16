@@ -144,6 +144,8 @@ public class Main extends Application {
 
                 if (Sim_Main.winner != null){
                     timer.cancel();
+                    System.out.println((Sim_Main.winner == Sim_Main.red ? "Red":"Blue") + " won.");
+                            
                     return;
                 }
                 System.out.println(Sim_Main.ticks);
