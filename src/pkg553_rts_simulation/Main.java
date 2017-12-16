@@ -37,7 +37,10 @@ import java.util.TimerTask;
 import javafx.scene.input.MouseEvent;
 
 import static pkg553_rts_simulation.Sim_Main.gold_disbursal;
+<<<<<<< HEAD
 import static pkg553_rts_simulation.Sim_Main.policies;
+=======
+>>>>>>> 72d583dbf70f3fcdfb92c43d526c78a04b860b72
 import static pkg553_rts_simulation.Sim_Main.policy_enactment;
 import static pkg553_rts_simulation.Sim_Main.winner;
  
@@ -146,9 +149,14 @@ public class Main extends Application {
                     timer.cancel();
                     return;
                 }
+<<<<<<< HEAD
                 System.out.println(Sim_Main.ticks);
             }
         }, 0, 30);
+=======
+            }
+        }, 0, 100);
+>>>>>>> 72d583dbf70f3fcdfb92c43d526c78a04b860b72
     }
     
 
@@ -158,7 +166,44 @@ public class Main extends Application {
      */
     @Override
     public void start(Stage primaryStage) {
+<<<<<<< HEAD
 
+=======
+        
+        
+//        try {
+//            ArrayList<Point> foo = new ArrayList<>();
+//            foo.add(new Point(5,4));
+//            foo.add(new Point(6,2));
+//            FileOutputStream fos = new FileOutputStream("t.tmp");
+//            ObjectOutputStream oos = new ObjectOutputStream(fos);
+//
+//            oos.writeInt(12345);
+//            oos.writeObject("Today");
+//            oos.writeObject(foo);
+//
+//            oos.close();
+//        }
+//        catch (Exception e){
+//            
+//        }
+//        
+//        try {
+//            ArrayList<Point> boo;
+//            FileInputStream fos = new FileInputStream("t.tmp");
+//            ObjectInputStream oos = new ObjectInputStream(fos);
+//            
+//            System.out.println((int)oos.readInt());
+//            System.out.println(oos.readObject());
+//            boo = (ArrayList<Point>)oos.readObject();
+//            System.out.println(boo.get(0) + "," + boo.get(1));
+//        }
+//        catch (Exception e){
+//            
+//        }
+//        
+//        System.exit(0);
+>>>>>>> 72d583dbf70f3fcdfb92c43d526c78a04b860b72
         
         
         Sim_Main.init_simulation();
@@ -167,6 +212,7 @@ public class Main extends Application {
  
         Sim_Main.ticks = 0;
         Sim_Main.ticks_until_next_arrival = 0;
+<<<<<<< HEAD
         
 //        Sim_Main.policies = Policy.generate_configurations();
 //        Sim_Main.stchs = StochasticInput.generate_configurations();
@@ -175,6 +221,9 @@ public class Main extends Application {
         
         Sim_Main.init_players(new Policy(60,160,400,5,10,5,20),new Policy(180,240,400,15,10,15,8));
         Sim_Main.stch = new StochasticInput(100,100,1,1,1,10);
+=======
+        Sim_Main.init_players(new Policy(),new Policy());
+>>>>>>> 72d583dbf70f3fcdfb92c43d526c78a04b860b72
         
         
         Scene scene = initialize_gui();

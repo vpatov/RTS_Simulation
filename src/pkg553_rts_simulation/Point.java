@@ -95,8 +95,11 @@ final public class Point implements Serializable{
     }
     
     public static boolean check_if_passable(Point point){
+<<<<<<< HEAD
         if (point.x >= Map.MAP_HEIGHT || point.x <= 0 || point.y >= Map.MAP_WIDTH || point.y <= 0)
             return false;
+=======
+>>>>>>> 72d583dbf70f3fcdfb92c43d526c78a04b860b72
         return Map.global_map[point.x][point.y] != Map.Terrain.CLIFF;
     }
     

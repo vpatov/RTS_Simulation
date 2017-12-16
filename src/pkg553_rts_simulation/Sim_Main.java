@@ -58,6 +58,7 @@ public class Sim_Main{
 
     
     public static void policy_enactment(Player player){
+<<<<<<< HEAD
         int i;
         ArrayList<Unit> new_units = null;
         double tot_units = (double)player.force.size();
@@ -67,6 +68,13 @@ public class Sim_Main{
             if (player.gold > player.policy.gold[i] && 
                 (Unit_Type.count_unit_type(player.force, Unit_Type.types[i]) / tot_units <= 
                     player.policy.unit_thresholds[i] || tot_units == 0)
+=======
+        ArrayList<Unit> new_units = null;
+        for (int i = 0; i < player.policy.gold.length; i++){
+            if (player.gold > player.policy.gold[i] &&
+                Unit_Type.count_unit_type(player.force, Unit_Type.types[i]) < 
+                    player.policy.unit_thresholds[i]
+>>>>>>> 72d583dbf70f3fcdfb92c43d526c78a04b860b72
                 ){
                 new_units = Unit.create_units(Unit_Type.types[i], player);
                 player.force.addAll(new_units);
@@ -107,6 +115,7 @@ public class Sim_Main{
         
         if (red.structures.isEmpty()){
             winner = blue;
+<<<<<<< HEAD
         }
         if (blue.structures.isEmpty()){
             winner = red;
@@ -131,6 +140,34 @@ public class Sim_Main{
 //        }
         
         if (ticks >= 2000){
+=======
+            
+            String data = String.format("%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d\n", simul_count, ticks,
+            		System.currentTimeMillis(), red.policy.gold[0], red.policy.unit_thresholds[0], red.policy.gold[1], 
+            		red.policy.unit_thresholds[1], red.policy.gold[2], red.policy.unit_thresholds[2], red.policy.max_idle_units,
+            		blue.policy.gold[0], blue.policy.unit_thresholds[0], blue.policy.gold[1], blue.policy.unit_thresholds[1], 
+            		blue.policy.gold[2], blue.policy.unit_thresholds[2], blue.policy.max_idle_units, ticks);
+            stats.append_to_file(Statistics.LOSS_FILE, data);
+        }
+        if (blue.structures.isEmpty()){
+            winner = red;
+            
+            String data = String.format("%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d\n", simul_count, ticks,
+            		System.currentTimeMillis(), red.policy.gold[0], red.policy.unit_thresholds[0], red.policy.gold[1], 
+            		red.policy.unit_thresholds[1], red.policy.gold[2], red.policy.unit_thresholds[2], red.policy.max_idle_units,
+            		blue.policy.gold[0], blue.policy.unit_thresholds[0], blue.policy.gold[1], blue.policy.unit_thresholds[1], 
+            		blue.policy.gold[2], blue.policy.unit_thresholds[2], blue.policy.max_idle_units, ticks);
+            stats.append_to_file(Statistics.WIN_FILE, data);
+        }
+
+        
+        if (ticks % 20 == 0)
+            StatsSummary();
+        
+        ticks++;
+        
+        if (ticks >= 50000){
+>>>>>>> 72d583dbf70f3fcdfb92c43d526c78a04b860b72
             return false;
         }
         return true;
@@ -188,7 +225,11 @@ public class Sim_Main{
         
     }
     
+<<<<<<< HEAD
     public static boolean run_simulation(Policy red_policy, Policy blue_policy,StochasticInput cur_stch){
+=======
+    public static void run_simulation(Policy red_policy, Policy blue_policy,StochasticInput cur_stch){
+>>>>>>> 72d583dbf70f3fcdfb92c43d526c78a04b860b72
         winner = null;
         stch = cur_stch;
         ticks = 0;
@@ -198,12 +239,15 @@ public class Sim_Main{
         while (true){
             
             if (winner != null){
+<<<<<<< HEAD
                 String data = String.format("%d,%d,%d,%d,%.2f,%d,%.2f,%d,%.2f,%d,%d,%.2f,%d,%.2f,%d,%.2f,%d\n", simul_count, ticks,
             		System.currentTimeMillis(), red.policy.gold[0], red.policy.unit_thresholds[0], red.policy.gold[1], 
             		red.policy.unit_thresholds[1], red.policy.gold[2], red.policy.unit_thresholds[2], red.policy.max_idle_units,
             		blue.policy.gold[0], blue.policy.unit_thresholds[0], blue.policy.gold[1], blue.policy.unit_thresholds[1], 
             		blue.policy.gold[2], blue.policy.unit_thresholds[2], blue.policy.max_idle_units);
                 stats.append_to_file(winner == red ? Statistics.WIN_FILE: Statistics.LOSS_FILE, data);
+=======
+>>>>>>> 72d583dbf70f3fcdfb92c43d526c78a04b860b72
                 break;
             }
             gold_disbursal();
@@ -212,6 +256,7 @@ public class Sim_Main{
 
 
             if (!update_state()){
+<<<<<<< HEAD
                 String data = String.format("%d,%d,%d,%d,%.2f,%d,%.2f,%d,%.2f,%d,%d,%.2f,%d,%.2f,%d,%.2f,%d\n", simul_count, ticks,
             		System.currentTimeMillis(), red.policy.gold[0], red.policy.unit_thresholds[0], red.policy.gold[1], 
             		red.policy.unit_thresholds[1], red.policy.gold[2], red.policy.unit_thresholds[2], red.policy.max_idle_units,
@@ -230,6 +275,12 @@ public class Sim_Main{
             
         }
         return false;
+=======
+                return;
+            }
+            
+        }
+>>>>>>> 72d583dbf70f3fcdfb92c43d526c78a04b860b72
         
         
 
@@ -245,7 +296,11 @@ public class Sim_Main{
         long start_time, end_time;
         
         init_simulation();
+<<<<<<< HEAD
         Random r = new Random(10);
+=======
+        Random r = new Random();
+>>>>>>> 72d583dbf70f3fcdfb92c43d526c78a04b860b72
         policies = Policy.generate_configurations();
         stchs = StochasticInput.generate_configurations();
         
@@ -256,6 +311,7 @@ public class Sim_Main{
 //        for (StochasticInput st: stchs){
 //            System.out.println(st);
 //        }
+<<<<<<< HEAD
         int count_draws = 0;
         boolean draw;
         System.out.println("About to perform " + policies.length * stchs.length + " simulations.");
@@ -289,6 +345,23 @@ public class Sim_Main{
                     }
                 }
 //            }
+=======
+        
+        for (i = 0; i < policies.length; i++){
+            while ((j = r.nextInt(policies.length)) != i);
+            for (k = 0; k < stchs.length; k++){
+                start_time = System.currentTimeMillis();
+                run_simulation(policies[i],policies[j],stchs[k]);
+                end_time = System.currentTimeMillis();
+                System.out.println("Simulation: " + simul_count + (winner == red ? "\tRed Won.": "\tBlue Won.") + 
+                        "\tTicks: " + ticks + "\tElapsed time: " + ((end_time - start_time) / 1000.0));
+                simul_count++;
+//                if (simul_count == 161){
+//                    int noop = 50;
+//                }
+
+            }
+>>>>>>> 72d583dbf70f3fcdfb92c43d526c78a04b860b72
             
         }
         
@@ -302,7 +375,10 @@ public class Sim_Main{
     
 
     
+<<<<<<< HEAD
     
+=======
+>>>>>>> 72d583dbf70f3fcdfb92c43d526c78a04b860b72
     public static void StatsSummary() {
     	
     	int buildingHealthBlue = 0, buildingHealthRed = 0;

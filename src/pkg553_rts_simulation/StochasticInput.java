@@ -87,10 +87,17 @@ public class StochasticInput {
             This means there will be lgc different gold_ceiling values, ltc different 
             time_ceiling values, lps different point_seed values, and so forth...
         */
+<<<<<<< HEAD
         lgc = 3;    ltc = 3;    lps = 1; 
         lgs = 1;    lts = 1;    ltm = 1;
         
         bgc = 20;   btc = 30;   bps = 1;
+=======
+        lgc = 3;    ltc = 3;    lps = 2; 
+        lgs = 3;    lts = 3;    ltm = 2;
+        
+        bgc = 30;   btc = 20;   bps = 1;
+>>>>>>> 72d583dbf70f3fcdfb92c43d526c78a04b860b72
         bgs = 1;    bts = 1;    btm = 10;
 
         stchs = new StochasticInput[lgc * ltc * lps * lgs * lts * ltm];
