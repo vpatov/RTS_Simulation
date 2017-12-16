@@ -148,12 +148,15 @@ public class Map {
                             new Point(x,y),new Point(x, y+ structure_size-1),
                             new Point(x + structure_size-1,y),new Point(x+ structure_size-1, y + structure_size-1)
                     );
+                    all_structures.add(struct);
+
                     if (terrain == Terrain.RED_STRUCTURE){
                         red_structures.add(struct);
                         struct.player = Sim_Main.red;
                     }
-                    else {
+                    if (terrain == Terrain.BLUE_STRUCTURE) {
                         blue_structures.add(struct);
+                        
                         struct.player = Sim_Main.blue;
                     }
                      
@@ -271,10 +274,10 @@ public class Map {
     static Point[] r3 = new Point[]{new Point(47, 152), new Point(47, 159), new Point(54, 152), new Point(54, 159)};
     static Point[] r4 = new Point[]{new Point(50, 178), new Point(50, 185), new Point(57, 178), new Point(57, 185)};
 
-    static Point[] b1 = new Point[]{new Point(184,8), new Point(191,8), new Point(184,15), new Point(191,15)};
-    static Point[] b2 = new Point[]{new Point(140,19), new Point(147,19), new Point(26,140), new Point(147,26)};
-    static Point[] b3 = new Point[]{new Point(152,47), new Point(159,47), new Point(152,54), new Point(159,54)};
-    static Point[] b4 = new Point[]{new Point(178,50), new Point(185,50), new Point(178,57), new Point(185,57)};
+    static Point[] b1 = new Point[]{new Point(184,8), new Point(184,15), new Point(191,8), new Point(191,15)};
+    static Point[] b2 = new Point[]{new Point(140,19), new Point(140,26), new Point(147,19), new Point(147,26)};
+    static Point[] b3 = new Point[]{new Point(152,47), new Point(152,54), new Point(159,47), new Point(159,54)};
+    static Point[] b4 = new Point[]{new Point(178,50), new Point(178,57), new Point(185,50), new Point(185,57)};
 
     public static ArrayList<Structure> hardcode_red_structs(){
         ArrayList<Structure> ret = new ArrayList<>();
@@ -286,6 +289,11 @@ public class Map {
         return ret;
        
    }
+    
+    
+    
+    
+
    
     public static ArrayList<Structure> hardcode_blue_structs(){
         ArrayList<Structure> ret = new ArrayList<>();

@@ -59,6 +59,7 @@ public class Main extends Application {
     static Slider slider;
     static Random random = new Random();
     static Timer timer;
+    static boolean first = true;
     
     private final static WritablePixelFormat<IntBuffer> pixelFormat = PixelFormat.getIntArgbPreInstance();
     private Canvas canvas;
@@ -131,6 +132,7 @@ public class Main extends Application {
     }
     
     public static void update_gui(){
+       
         timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
@@ -149,6 +151,10 @@ public class Main extends Application {
                     return;
                 }
                 System.out.println(Sim_Main.ticks);
+                if (first){
+                    timer.cancel();
+                    first = false;
+                }
             }
         }, 0, 30);
     }
@@ -175,7 +181,10 @@ public class Main extends Application {
         
 //        60,160,400,5,10,5,20	Blue policy: 180,240,400,15,10,15,8	 Stochastic Input: 100, 100, 1, 1, 1, 10
         
-        Sim_Main.init_players(new Policy(60,160,400,5,10,5,20),new Policy(180,240,400,15,10,15,8));
+//        Sim_Main.init_players(new Policy(60,160,400,5,10,5,20),new Policy(180,240,400,15,10,15,8));
+//        Sim_Main.stch = new StochasticInput(100,100,1,1,1,10);
+        
+        Sim_Main.init_players(new Policy(30,50,200,0.3,0.2,0.5,20),new Policy(180,240,400,15,10,15,8));
         Sim_Main.stch = new StochasticInput(100,100,1,1,1,10);
         
         

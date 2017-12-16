@@ -78,9 +78,10 @@ public class Rendering {
     	int[] map = buffer;
     	
     	//Blue Team
+    	//Red Team
     	for(Structure blue : Sim_Main.blue.structures) {
-    		for(int row = blue.top_left.x * _cellSize; row < (blue.bottom_left.x + 1) * _cellSize; row++) {
-    			for(int col = blue.top_left.y * _cellSize; col < (blue.top_right.y + 1) * _cellSize; col++) {
+    		for(int row = blue.top_left.x * _cellSize; row <= (blue.bottom_left.x + 1) * _cellSize; row++) {
+    			for(int col = blue.top_left.y * _cellSize; col <= (blue.top_right.y + 1) * _cellSize; col++) {
     				map[col + (row * _width)] = BLUE_STRUCT_ALIVE;
     			}
     		}
@@ -176,7 +177,7 @@ public class Rendering {
 ////                System.out.println(struct.top_left + "," + struct.top_right + "," + struct.bottom_left + "," + struct.bottom_right + "," + struct.location);
 //                for(int row = p.x * _cellSize; row < (p.x + _unitSize) * _cellSize; row++) {
 //                    for(int col = p.y * _cellSize; col < (p.y + _unitSize) * _cellSize; col++) {
-//                            map[col + (row * _width)] = BLUE_STRUCT_CENTER;
+//                            map[col + (row * _width)] = BLUE_STRUCT_ALIVE;
 //                    }
 //                } 
 //            }

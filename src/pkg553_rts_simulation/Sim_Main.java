@@ -259,7 +259,7 @@ public class Sim_Main{
         int count_draws = 0;
         boolean draw;
         System.out.println("About to perform " + policies.length * stchs.length + " simulations.");
-        for (i = 0; i < policies.length; i++){
+        for (i = 1000; i < policies.length; i++){
             count_draws = 0;
             System.out.println("============ Policy #" + i);
             while ((j = r.nextInt(policies.length)) == i);
