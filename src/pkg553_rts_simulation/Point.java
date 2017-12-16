@@ -17,6 +17,7 @@
  */
 package pkg553_rts_simulation;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -27,7 +28,7 @@ import java.util.Objects;
  * @author Simulation533
  */
 
-final public class Point{
+final public class Point implements Serializable{
     final int x;
     final int y;
     

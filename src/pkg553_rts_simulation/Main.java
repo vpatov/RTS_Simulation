@@ -5,6 +5,10 @@
  */
 package pkg553_rts_simulation;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -27,12 +31,14 @@ import javafx.scene.layout.HBox;
 import javafx.scene.control.Slider;
 
 import java.nio.IntBuffer;
+import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 import javafx.scene.input.MouseEvent;
 
 import static pkg553_rts_simulation.Sim_Main.gold_disbursal;
 import static pkg553_rts_simulation.Sim_Main.policy_enactment;
+import static pkg553_rts_simulation.Sim_Main.winner;
  
 
 /**
@@ -150,6 +156,50 @@ public class Main extends Application {
      */
     @Override
     public void start(Stage primaryStage) {
+        
+        
+//        try {
+//            ArrayList<Point> foo = new ArrayList<>();
+//            foo.add(new Point(5,4));
+//            foo.add(new Point(6,2));
+//            FileOutputStream fos = new FileOutputStream("t.tmp");
+//            ObjectOutputStream oos = new ObjectOutputStream(fos);
+//
+//            oos.writeInt(12345);
+//            oos.writeObject("Today");
+//            oos.writeObject(foo);
+//
+//            oos.close();
+//        }
+//        catch (Exception e){
+//            
+//        }
+//        
+//        try {
+//            ArrayList<Point> boo;
+//            FileInputStream fos = new FileInputStream("t.tmp");
+//            ObjectInputStream oos = new ObjectInputStream(fos);
+//            
+//            System.out.println((int)oos.readInt());
+//            System.out.println(oos.readObject());
+//            boo = (ArrayList<Point>)oos.readObject();
+//            System.out.println(boo.get(0) + "," + boo.get(1));
+//        }
+//        catch (Exception e){
+//            
+//        }
+//        
+//        System.exit(0);
+        
+        
+        Sim_Main.init_simulation();
+        Sim_Main.winner = null;
+        Sim_Main.stch = new StochasticInput();
+ 
+        Sim_Main.ticks = 0;
+        Sim_Main.ticks_until_next_arrival = 0;
+        Sim_Main.init_players(new Policy(),new Policy());
+        
         
         Scene scene = initialize_gui();
         

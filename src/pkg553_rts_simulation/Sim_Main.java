@@ -85,7 +85,7 @@ public class Sim_Main{
     
     
     //movement and attacking
-    public static void update_state(){
+    public static boolean update_state(){
 
         //System.out.println("Ticks: " + Sim_Main.ticks);
         gold_disbursal();
@@ -104,27 +104,36 @@ public class Sim_Main{
         if (red.structures.isEmpty()){
             winner = blue;
             
-            String data = String.format("%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d\n", simul_count, 
+            String data = String.format("%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d\n", simul_count, ticks,
             		System.currentTimeMillis(), red.policy.gold[0], red.policy.unit_thresholds[0], red.policy.gold[1], 
             		red.policy.unit_thresholds[1], red.policy.gold[2], red.policy.unit_thresholds[2], red.policy.max_idle_units,
             		blue.policy.gold[0], blue.policy.unit_thresholds[0], blue.policy.gold[1], blue.policy.unit_thresholds[1], 
-            		blue.policy.gold[2], blue.policy.unit_thresholds[2], blue.policy.max_idle_units, ticks +1);
+            		blue.policy.gold[2], blue.policy.unit_thresholds[2], blue.policy.max_idle_units, ticks);
             stats.append_to_file(Statistics.LOSS_FILE, data);
         }
         if (blue.structures.isEmpty()){
             winner = red;
             
-            String data = String.format("%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d\n", simul_count, 
+            String data = String.format("%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d\n", simul_count, ticks,
             		System.currentTimeMillis(), red.policy.gold[0], red.policy.unit_thresholds[0], red.policy.gold[1], 
             		red.policy.unit_thresholds[1], red.policy.gold[2], red.policy.unit_thresholds[2], red.policy.max_idle_units,
             		blue.policy.gold[0], blue.policy.unit_thresholds[0], blue.policy.gold[1], blue.policy.unit_thresholds[1], 
-            		blue.policy.gold[2], blue.policy.unit_thresholds[2], blue.policy.max_idle_units, ticks +1);
+            		blue.policy.gold[2], blue.policy.unit_thresholds[2], blue.policy.max_idle_units, ticks);
             stats.append_to_file(Statistics.WIN_FILE, data);
         }
 
+        
+        if (ticks % 20 == 0)
+            StatsSummary();
+        
         ticks++;
         
-        StatsSummary();
+        if (ticks >= 50000){
+            return false;
+        }
+        return true;
+
+        
     }
     
     public static void init_players(Policy red_policy, Policy blue_policy){
@@ -164,6 +173,9 @@ public class Sim_Main{
         Unit_Type.init_unit_types("params/unit_types.txt");
         Map.load_structures();
         
+        Map.all_structures = new ArrayList<>();
+        Map.all_structures.addAll(Map.hardcode_blue_structs());
+        Map.all_structures.addAll(Map.hardcode_red_structs());
         red_starting_points = Map.init_starting_points(true);
         blue_starting_points = Map.init_starting_points(false);
 
@@ -191,7 +203,9 @@ public class Sim_Main{
             policy_enactment(blue);
 
 
-            update_state();
+            if (!update_state()){
+                return;
+            }
             
         }
         
@@ -213,13 +227,13 @@ public class Sim_Main{
         policies = Policy.generate_configurations();
         stchs = StochasticInput.generate_configurations();
         
-        for (Policy plc: policies){
-            System.out.println(plc);
-        }
-        
-        for (StochasticInput st: stchs){
-            System.out.println(st);
-        }
+//        for (Policy plc: policies){
+//            System.out.println(plc);
+//        }
+//        
+//        for (StochasticInput st: stchs){
+//            System.out.println(st);
+//        }
         
         for (i = 0; i < policies.length; i++){
             while ((j = r.nextInt(policies.length)) != i);
@@ -230,6 +244,9 @@ public class Sim_Main{
                 System.out.println("Simulation: " + simul_count + (winner == red ? "\tRed Won.": "\tBlue Won.") + 
                         "\tTicks: " + ticks + "\tElapsed time: " + ((end_time - start_time) / 1000.0));
                 simul_count++;
+//                if (simul_count == 161){
+//                    int noop = 50;
+//                }
 
             }
             
@@ -264,11 +281,11 @@ public class Sim_Main{
 
 //		String summary = "Player\tGold Collected\tGold Spent\tUnits Built\tUnits Lost\tBuildings Standing\tBuilding Health\tDamage "
 //				+ "Dealt\tUnits in Enemy Territory";
-        String summaryBlue = String.format("%d,%d,%d,%d,%d,%d,%d,%d",
-                        stats.totalGold, stats.totalGold - blue.gold, stats.unitsBuiltBlue, unitsLostBlue, 
+        String summaryBlue = String.format("%d,%d,%d,%d,%d,%d,%d,%d,%d",
+                        ticks,stats.totalGold, stats.totalGold - blue.gold, stats.unitsBuiltBlue, unitsLostBlue, 
                         blue.structures.size(), buildingHealthBlue, stats.damageDealtBlue, enemyTerritoryUnitsBlue);
-        String summaryRed =String.format("%d,%d,%d,%d,%d,%d,%d,%d",
-                        stats.totalGold, stats.totalGold - red.gold, stats.unitsBuiltRed, unitsLostRed, 
+        String summaryRed =String.format("%d,%d,%d,%d,%d,%d,%d,%d,%d",
+                        ticks,stats.totalGold, stats.totalGold - red.gold, stats.unitsBuiltRed, unitsLostRed, 
                         red.structures.size(), buildingHealthRed, stats.damageDealtRed, enemyTerritoryUnitsRed);
 //		return summary + "\n" + summaryBlue + "\n" + summaryRed;
         stats.append_to_file(stats.STATS_FILE, summaryBlue + "," + summaryRed + "\n");

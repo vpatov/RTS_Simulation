@@ -80,7 +80,7 @@ public class Statistics {
         
 
 	private void init_win_loss_files() {
-		String header = "Run ID,Timestamp,Red Policy (G1/X1/G2/X2/G3/X3/X4),Blue Policy (G1/X1/G2/X2/G3/X3/X4),Num Ticks\n";
+		String header = "Run ID,Total Ticks,Timestamp,Red Policy (G1/X1/G2/X2/G3/X3/X4),Blue Policy (G1/X1/G2/X2/G3/X3/X4),Num Ticks\n";
 		
 		try {
 			LOSS_FILE = new File(LOSS_FILE_PATH +  + iter_count + ".csv");
@@ -112,7 +112,7 @@ public class Statistics {
         }
 	
         private void init_stats_file(){
-            String header = "Gold Collected Blue,Gold Spent Blue,Units Built Blue,Units Lost Blue,Buildings Standing Blue,"
+            String header = "Ticks,Gold Collected Blue,Gold Spent Blue,Units Built Blue,Units Lost Blue,Buildings Standing Blue,"
 	    		+ "Building Health Blue,Damage Dealt Blue,Units in Enemy Territory Blue," +
 	    		"Gold Collected Red,Gold Spent Red,Units Built Red,Units Lost Red,Buildings Standing Red,Building Health Red,"
 	    		+ "Damage Dealt Red,Units in Enemy Territory Red\n";

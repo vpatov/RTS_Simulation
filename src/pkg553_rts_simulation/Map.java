@@ -23,6 +23,10 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.awt.Color;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -51,7 +55,7 @@ public class Map {
     static ArrayList<Structure> all_structures;
     static ArrayList<Structure> blue_structures;
     static ArrayList<Structure> red_structures;
-    static HashMap<String, LinkedList<Point>>[][] paths;
+    static HashMap<Point, LinkedList<Point>>[][] paths;
     
   
     static final int GRASS_COLOR =          ((255 & 0xFF) << 24) | ((32 & 0xFF) << 16)  | ((192 & 0xFF) << 8)   | ((64 & 0xFF) << 0);
@@ -144,7 +148,6 @@ public class Map {
                             new Point(x,y),new Point(x, y+ structure_size-1),
                             new Point(x + structure_size-1,y),new Point(x+ structure_size-1, y + structure_size-1)
                     );
-                    all_structures.add(struct);
                     if (terrain == Terrain.RED_STRUCTURE){
                         red_structures.add(struct);
                         struct.player = Sim_Main.red;
@@ -205,53 +208,93 @@ public class Map {
    }
 
     
-   public static void precalculatePaths() {
-	   paths = new HashMap[MAP_WIDTH][MAP_HEIGHT];
-		Unit u = new Unit(Unit_Type.TYPE.TYPE_1);
-		
-		for (int i = 0; i < Sim_Main.MAP_WIDTH; i++) {
-			for (int j = 0; j < Sim_Main.MAP_HEIGHT; j++) {
-				if (Map.global_map[i][j] == Map.Terrain.CLIFF) continue;
-				
-				paths[i][j] = new HashMap<String, LinkedList<Point>>();
-				u.location = new Point(i, j);
-				for (Structure s : Map.all_structures) {
-					paths[i][j].put(s.location.x + "," + s.location.y, u.find_path_to_point(s.location));
-				}
-			}
-		}
-   	}
-   
-   static Point[] r1 = new Point[]{new Point(8,184), new Point(8,191), new Point(15,184), new Point(15,191)};
-   static Point[] r2 = new Point[]{new Point(19, 140), new Point(19, 147), new Point(26, 140), new Point(26, 147)};
-   static Point[] r3 = new Point[]{new Point(47, 152), new Point(47, 159), new Point(54, 152), new Point(54, 159)};
-   static Point[] r4 = new Point[]{new Point(50, 178), new Point(50, 185), new Point(57, 178), new Point(57, 185)};
-   
-   static Point[] b1 = new Point[]{new Point(184,8), new Point(191,8), new Point(184,15), new Point(191,15)};
-   static Point[] b2 = new Point[]{new Point(140,19), new Point(147,19), new Point(26,140), new Point(147,26)};
-   static Point[] b3 = new Point[]{new Point(152,47), new Point(159,47), new Point(152,54), new Point(159,54)};
-   static Point[] b4 = new Point[]{new Point(178,50), new Point(185,50), new Point(178,57), new Point(185,57)};
-   
-   public static ArrayList<Structure> hardcode_red_structs(){
-       ArrayList<Structure> ret = new ArrayList<>();
+    public static void precalculatePaths() {
+        long start_time, end_time;
+        String dir = System.getProperty("user.dir") + "/paths/";
        
-       ret.add(new Structure(r1[0],r1[1],r1[2],r1[3]));
-       ret.add(new Structure(r2[0],r2[1],r2[2],r2[3]));
-       ret.add(new Structure(r3[0],r3[1],r3[2],r3[3]));
-       ret.add(new Structure(r4[0],r4[1],r4[2],r4[3]));
-       return ret;
+        File f = new File(dir + "paths");
+        if(f.exists() && !f.isDirectory()) { 
+            try {
+                start_time = System.currentTimeMillis();
+                System.out.println("Reading from existing paths file...");
+                ObjectInputStream ois = new ObjectInputStream(new FileInputStream(dir + "paths"));
+                Map.paths = (HashMap<Point, LinkedList<Point>>[][])ois.readObject();
+                end_time = System.currentTimeMillis();
+                System.out.println("Readng complete! Took: " + ((end_time - start_time) / 1000.0) + " seconds");
+                return;
+            }
+            catch (Exception e){
+                e.printStackTrace();
+                
+            }
+        }
+        System.out.println("Precalculating the paths...");
+        start_time = System.currentTimeMillis();
+       
+        paths = new HashMap[MAP_WIDTH][MAP_HEIGHT];
+        Unit u = new Unit(Unit_Type.TYPE.TYPE_1);
+        
+        for (Point p: Sim_Main.blue_starting_points){
+            paths[p.x][p.y] = new HashMap<>();
+            u.location = p;
+            for (Structure s : Map.all_structures) {
+                paths[p.x][p.y].put(s.location, u.find_path_to_point(s.location));
+            }
+        }
+        
+        for (Point p: Sim_Main.red_starting_points){
+            paths[p.x][p.y] = new HashMap<>();
+            u.location = p;
+            for (Structure s : Map.all_structures) {
+                paths[p.x][p.y].put(s.location, u.find_path_to_point(s.location));
+            }
+        }
+        
+        end_time = System.currentTimeMillis();
+        System.out.println("Calculated paths! Took: " + ((end_time - start_time) / 1000.0) + " seconds");
+
+        
+        try (ObjectOutputStream oos =
+            new ObjectOutputStream(new FileOutputStream(dir + "paths"))) {
+
+            oos.writeObject(paths);
+            System.out.println("Serialized paths");
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+    }
+   
+    static Point[] r1 = new Point[]{new Point(8,184), new Point(8,191), new Point(15,184), new Point(15,191)};
+    static Point[] r2 = new Point[]{new Point(19, 140), new Point(19, 147), new Point(26, 140), new Point(26, 147)};
+    static Point[] r3 = new Point[]{new Point(47, 152), new Point(47, 159), new Point(54, 152), new Point(54, 159)};
+    static Point[] r4 = new Point[]{new Point(50, 178), new Point(50, 185), new Point(57, 178), new Point(57, 185)};
+
+    static Point[] b1 = new Point[]{new Point(184,8), new Point(191,8), new Point(184,15), new Point(191,15)};
+    static Point[] b2 = new Point[]{new Point(140,19), new Point(147,19), new Point(26,140), new Point(147,26)};
+    static Point[] b3 = new Point[]{new Point(152,47), new Point(159,47), new Point(152,54), new Point(159,54)};
+    static Point[] b4 = new Point[]{new Point(178,50), new Point(185,50), new Point(178,57), new Point(185,57)};
+
+    public static ArrayList<Structure> hardcode_red_structs(){
+        ArrayList<Structure> ret = new ArrayList<>();
+       
+        ret.add(new Structure(r1[0],r1[1],r1[2],r1[3]));
+        ret.add(new Structure(r2[0],r2[1],r2[2],r2[3]));
+        ret.add(new Structure(r3[0],r3[1],r3[2],r3[3]));
+        ret.add(new Structure(r4[0],r4[1],r4[2],r4[3]));
+        return ret;
        
    }
    
     public static ArrayList<Structure> hardcode_blue_structs(){
-       ArrayList<Structure> ret = new ArrayList<>();
-       
-       ret.add(new Structure(b1[0],b1[1],b1[2],b1[3]));
-       ret.add(new Structure(b2[0],b2[1],b2[2],b2[3]));
-       ret.add(new Structure(b3[0],b3[1],b3[2],b3[3]));
-       ret.add(new Structure(b4[0],b4[1],b4[2],b4[3]));
-       return ret;
-       
+        ArrayList<Structure> ret = new ArrayList<>();
+
+        ret.add(new Structure(b1[0],b1[1],b1[2],b1[3]));
+        ret.add(new Structure(b2[0],b2[1],b2[2],b2[3]));
+        ret.add(new Structure(b3[0],b3[1],b3[2],b3[3]));
+        ret.add(new Structure(b4[0],b4[1],b4[2],b4[3]));
+        return ret;
    }
     
 }
