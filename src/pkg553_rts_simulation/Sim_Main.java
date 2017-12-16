@@ -26,26 +26,24 @@ public class Sim_Main{
     static int MAP_HEIGHT = 200;
 
     static int ticks = 0;
-    static int ticks_since_last_arrival = 0;
-    static int current_gold_index = 0;
-    static int gold_arrival[] = {2,8,12,8,24,9,13,5,8}; //test values
-    static int gold_values[] = {100,150,80,250,100,290,180,240,170};
+    static int ticks_until_next_arrival = 0;
     static Player red, blue;
     static Statistics stats = new Statistics();
     static Player winner = null;
     static StochasticInput stch = new StochasticInput();
     
     static public void gold_disbursal(){
-        if (ticks_since_last_arrival == 0){
-            red.gold += gold_values[current_gold_index];
-            blue.gold += gold_values[current_gold_index];
-            stats.totalGold += gold_values[current_gold_index];
+        int gold;
+        if (ticks_until_next_arrival == 0){
+            gold = stch.get_gold();
+            red.gold += gold;
+            blue.gold += gold;
+            stats.totalGold += gold;
             
-            ticks_since_last_arrival = gold_arrival[current_gold_index];
-            current_gold_index = (current_gold_index + 1) % gold_arrival.length;
+            ticks_until_next_arrival = stch.get_arrival_time();
         }
         else {
-            ticks_since_last_arrival--;
+            ticks_until_next_arrival--;
         }
     }
     
