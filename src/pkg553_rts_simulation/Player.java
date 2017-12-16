@@ -64,35 +64,20 @@ public class Player {
     
     Point[] starting_unit_points;
     
-    class Policy {
 
-        int gold[];
-        int unit_thresholds[];
-        int max_idle_units;
-        
-        //most basic default policy
-        public Policy(){
-            gold = new int[Unit_Type.types.length];
-            for (int i = 0; i < gold.length; i++){
-                gold[i] = Unit_Type.unit_types.get(Unit_Type.types[i]).gold_cost;
-            }
-            unit_thresholds = new int[]{20,10,5};
-            max_idle_units = 3;
-            
-        }
-    }
-    
     public Player(boolean red, ArrayList<Structure> structures){
         this.gold = 0;
-        this.policy = new Policy();
         this.red = red;
         this.structures = structures;
         corner = red ? Map.red_corner : Map.blue_corner;
 
         dead_structures = new ArrayList<>();
-        force = new ArrayList<>();
-        
-        
+        force = new ArrayList<>(); 
+    }
+    
+    public Player(boolean red, ArrayList<Structure> structures, Policy policy){
+        this(red,structures);
+        this.policy = policy;
     }
     
     

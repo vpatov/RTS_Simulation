@@ -76,14 +76,12 @@ public class StochasticInput {
             This means there will be lgc different gold_ceiling values, ltc different 
             time_ceiling values, lps different point_seed values, and so forth...
         */
-        lgc = 5;    ltc = 5;    lps = 5; 
-        lgs = 3;    lts = 3;    ltm = 3;
+        lgc = 3;    ltc = 3;    lps = 2; 
+        lgs = 3;    lts = 3;    ltm = 2;
         
         bgc = 30;   btc = 20;   bps = 1;
         bgs = 1;    bts = 1;    btm = 10;
-        
-        
-        
+
         stchs = new StochasticInput[lgc * ltc * lps * lgs * lts * ltm];
         
         int index = 0;
@@ -98,7 +96,7 @@ public class StochasticInput {
                         for (int m = 1; m <= lts;  m++){
                             ts = (bts * m);
                             for (int n = 1; n <= ltm; n++){
-                                tm = (ltm * n);
+                                tm = (btm * n);
                                 stchs[index++] = new StochasticInput(gc,tc,ps,gs,ts,tm);
                             }
                         }
