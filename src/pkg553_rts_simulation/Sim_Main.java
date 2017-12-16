@@ -99,11 +99,11 @@ public class Sim_Main{
         
         if (current.red_structures.isEmpty()){
             System.out.println("Blue won");
-            blue = winner;
+            winner = blue;
         }
         if (current.blue_structures.isEmpty()){
             System.out.println("Red won");
-            red = winner;
+            winner = red;
         }
         
         state_buffer[(ticks + 1) % STATE_BUFFER_SIZE] = state_buffer[ticks % STATE_BUFFER_SIZE];
