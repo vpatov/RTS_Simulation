@@ -127,10 +127,9 @@ public class Statistics {
 			e.printStackTrace();
             }
 	    
-<<<<<<< HEAD
-=======
+
 	    append_to_file(STATS_FILE, header);
->>>>>>> 72d583dbf70f3fcdfb92c43d526c78a04b860b72
+
         }
         
 	
