@@ -25,6 +25,7 @@ public class Policy {
     
 
 
+
     int gold[];
 <<<<<<< HEAD
     double unit_thresholds[];

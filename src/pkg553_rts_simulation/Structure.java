@@ -20,6 +20,7 @@ package pkg553_rts_simulation;
 
 
 
+
 /*
 Blue Structure (0): (19, 140)(19, 147)(26, 140)(26, 147) Center: (143, 16)
 Blue Structure (0): (23, 174)(23, 181)(30, 174)(30, 181) Center: (177, 20)

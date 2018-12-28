@@ -26,6 +26,7 @@ import java.util.ArrayList;
  */
 
 
+ 
 /*
 Anytime any of the four conditions are met, the player takes a specific action. 
 The conditions and actions are going to be of the following form:

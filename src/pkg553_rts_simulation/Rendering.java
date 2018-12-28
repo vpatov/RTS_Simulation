@@ -2,6 +2,7 @@ package pkg553_rts_simulation;
 
 import javafx.scene.paint.Color;
 
+
 public class Rendering {
 	final static int BLACK 	= colorToInt(Color.BLACK);
         final static int GREEN 	= colorToInt(Color.GREEN);
