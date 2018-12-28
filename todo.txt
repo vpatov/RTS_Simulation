@@ -1,4 +1,0 @@
-
-1) Get starting points for both players, based off of where structures where.
-2) Programmatically design types? Its getting messy.
-2) 
